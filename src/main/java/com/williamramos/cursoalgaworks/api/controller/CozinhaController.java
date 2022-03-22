@@ -4,7 +4,9 @@ import com.williamramos.cursoalgaworks.api.model.CozinhaWrapper;
 import com.williamramos.cursoalgaworks.domain.model.Cozinha;
 import com.williamramos.cursoalgaworks.domain.repository.CozinhaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,19 +23,32 @@ public class CozinhaController {
     private CozinhaRepository repository;
 
     @GetMapping()
-    public List<Cozinha> listar(){
-        return repository.listAll();
+    public ResponseEntity<List<Cozinha>> listar() {
+        List<Cozinha> cozinhas = repository.listAll();
+        if (cozinhas != null) {
+            return ResponseEntity.status(HttpStatus.OK).body(cozinhas);
+        }
+        return ResponseEntity.notFound().build();
     }
 
     @GetMapping(produces = MediaType.APPLICATION_XML_VALUE)
-    public CozinhaWrapper listarXML(){
-        return  new CozinhaWrapper(repository.listAll());
+    public ResponseEntity<CozinhaWrapper> listarXML() {
+        CozinhaWrapper obj = new CozinhaWrapper(repository.listAll());
+        if (obj != null) {
+            return ResponseEntity.status(HttpStatus.OK).body(obj);
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 
 
     @GetMapping("/{id}")
-    public Cozinha buscar(@PathVariable Long id){
-        return repository.finById(id);
+    public ResponseEntity<Cozinha> buscar(@PathVariable Long id) {
+        Cozinha obj = repository.finById(id);
+        if (obj != null) {
+            return ResponseEntity.status(HttpStatus.OK).body(obj);
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+
     }
 
 }
