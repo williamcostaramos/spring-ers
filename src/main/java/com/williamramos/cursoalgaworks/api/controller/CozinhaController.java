@@ -63,10 +63,19 @@ public class CozinhaController {
     public ResponseEntity<Cozinha> salvar(@PathVariable Long id, @RequestBody Cozinha cozinha) {
         Cozinha obj = repository.finById(id);
         if(obj != null){
-            BeanUtils.copyProperties(cozinha, obj);
+            BeanUtils.copyProperties(cozinha, obj, "id");
             obj = repository.salvar(obj);
             return ResponseEntity.status(HttpStatus.OK).body(obj);
         }
         return  ResponseEntity.notFound().build();
+    }
+    @DeleteMapping("/{id}")
+    public ResponseEntity remover(@PathVariable Long id){
+        Cozinha obj = repository.finById(id);
+        if(obj != null){
+            repository.remove(obj);
+            return ResponseEntity.status(HttpStatus.OK).build();
+        }
+        return ResponseEntity.notFound().build();
     }
 }
