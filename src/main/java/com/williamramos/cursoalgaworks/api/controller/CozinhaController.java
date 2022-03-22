@@ -3,6 +3,7 @@ package com.williamramos.cursoalgaworks.api.controller;
 import com.williamramos.cursoalgaworks.api.model.CozinhaWrapper;
 import com.williamramos.cursoalgaworks.domain.model.Cozinha;
 import com.williamramos.cursoalgaworks.domain.repository.CozinhaRepository;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -56,7 +57,16 @@ public class CozinhaController {
             return ResponseEntity.status(HttpStatus.CREATED).body(obj);
           }
           return ResponseEntity.internalServerError().build();
-
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<Cozinha> salvar(@PathVariable Long id, @RequestBody Cozinha cozinha) {
+        Cozinha obj = repository.finById(id);
+        if(obj != null){
+            BeanUtils.copyProperties(cozinha, obj);
+            obj = repository.salvar(obj);
+            return ResponseEntity.status(HttpStatus.OK).body(obj);
+        }
+        return  ResponseEntity.notFound().build();
+    }
 }
