@@ -28,7 +28,7 @@ public class ListaCozinhaMain {
 
         for(int i=cozinhas.size() - 1; i <=cozinhas.size(); i++){
             Cozinha cozinha = cozinhas.get(i);
-            repository.remove(cozinha);
+            repository.remove(cozinha.getId());
         }
 
 

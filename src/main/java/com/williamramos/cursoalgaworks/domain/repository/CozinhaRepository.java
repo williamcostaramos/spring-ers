@@ -9,5 +9,5 @@ public interface CozinhaRepository {
     List<Cozinha> listAll();
     Cozinha finById(Long id);
     Cozinha salvar(Cozinha cozinha);
-    void remove(Cozinha cozinha);
+    void remove(Long id);
 }
