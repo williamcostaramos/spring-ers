@@ -8,23 +8,23 @@ import com.williamramos.cursoalgaworks.domain.repository.UsuarioRepository;
 import com.williamramos.cursoalgaworks.service.AtivacaoClienteService;
 import com.williamramos.cursoalgaworks.service.EmissaoNotaFiscalService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Arrays;
 import java.util.List;
 
 @RestController
-@RequestMapping("usuarios")
+@RequestMapping("/usuarios")
 public class UsuarioController {
     @Autowired
     private UsuarioRepository repository;
     private AtivacaoClienteService ativacaoClienteService;
     @Autowired
     private EmissaoNotaFiscalService emissaoNotaFiscalService;
+
+
 
     public UsuarioController(AtivacaoClienteService ativacaoClienteService) {
         this.ativacaoClienteService = ativacaoClienteService;
@@ -33,14 +33,11 @@ public class UsuarioController {
 
     private Usuario usuario;
 
-    @GetMapping("/salvar")
-    public void salvar() {
-        Cliente c1 = new Cliente();
-        c1.setNome("William");
-        c1.setEmail("wulliamcostaramos@gmail.com");
-        c1.setTelefone("63 9829687");
-        this.ativacaoClienteService.ativar(c1);
-        emissaoNotaFiscalService.emitir(c1);
+    @PostMapping
+    public void salvar(@RequestBody Usuario usuario) {
+        Usuario user = new Usuario();
+        user = usuario;
+        System.out.printf(user.toString());
     }
     @GetMapping("/cep/{cep}")
     public List<Object> listarCep(@PathVariable Long cep){

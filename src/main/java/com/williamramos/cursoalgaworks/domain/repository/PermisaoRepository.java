@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface PermisaoRepository {
     List<Permissao> listAll();
-    Permissao findById(Long id);
+    Permissao buscar(Long id);
     Permissao salvar(Permissao permissao);
     void remover(Permissao permissao);
 }

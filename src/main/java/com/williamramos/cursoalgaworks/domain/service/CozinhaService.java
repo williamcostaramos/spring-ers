@@ -21,7 +21,7 @@ public class CozinhaService {
     }
 
     public Cozinha buscar(Long id) {
-        return repository.finById(id);
+        return repository.buscar(id);
     }
 
     public Cozinha salvar(Cozinha cozinha) {

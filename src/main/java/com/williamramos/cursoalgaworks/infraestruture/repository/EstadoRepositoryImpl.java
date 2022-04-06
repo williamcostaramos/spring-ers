@@ -2,6 +2,7 @@ package com.williamramos.cursoalgaworks.infraestruture.repository;
 
 import com.williamramos.cursoalgaworks.domain.model.Estado;
 import com.williamramos.cursoalgaworks.domain.repository.EstadoRepository;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.EntityManager;
@@ -12,13 +13,14 @@ import java.util.List;
 public class EstadoRepositoryImpl implements EstadoRepository {
     @PersistenceContext
     private EntityManager manager;
+
     @Override
     public List<Estado> listAll() {
         return manager.createQuery("from Estado", Estado.class).getResultList();
     }
 
     @Override
-    public Estado findById(Long id) {
+    public Estado buscar(Long id) {
         return manager.find(Estado.class, id);
     }
 
@@ -28,10 +30,12 @@ public class EstadoRepositoryImpl implements EstadoRepository {
     }
 
     @Override
-    public void remover(Estado Estado) {
-        Estado obj = findById(Estado.getId());
-        if(obj != null){
-            manager.remove(obj);
+    public void remover(Long id) {
+        Estado obj = buscar(id);
+        if (obj == null) {
+            throw new EmptyResultDataAccessException(1);
         }
+        manager.remove(obj);
+
     }
 }

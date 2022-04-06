@@ -1,8 +1,8 @@
 package com.williamramos.cursoalgaworks.infraestruture.repository;
 
-import com.williamramos.cursoalgaworks.domain.model.Cozinha;
 import com.williamramos.cursoalgaworks.domain.model.Restaurante;
 import com.williamramos.cursoalgaworks.domain.repository.RestauranteRepository;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,7 +19,7 @@ public class RestauranteRepositoryImpl implements RestauranteRepository {
     }
 
     @Override
-    public Restaurante findById(Long id) {
+    public Restaurante buscar(Long id) {
         return manager.find(Restaurante.class, id);
     }
 
@@ -31,8 +31,11 @@ public class RestauranteRepositoryImpl implements RestauranteRepository {
 
     @Transactional
     @Override
-    public void remover(Restaurante obj) {
-        Restaurante restaurante = findById(obj.getId());
+    public void remover(Long id) {
+        Restaurante restaurante = buscar(id);
+        if(restaurante == null){
+            throw new EmptyResultDataAccessException(1);
+        }
         manager.remove(restaurante);
     }
 }

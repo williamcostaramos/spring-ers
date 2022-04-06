@@ -1,6 +1,5 @@
 package com.williamramos.cursoalgaworks.infraestruture.repository;
 
-import com.williamramos.cursoalgaworks.domain.exception.EntidadeNaoEncontradaException;
 import com.williamramos.cursoalgaworks.domain.model.Cozinha;
 import com.williamramos.cursoalgaworks.domain.repository.CozinhaRepository;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -22,7 +21,7 @@ public class CozinhaRepositoryImpl implements CozinhaRepository {
     }
 
     @Override
-    public Cozinha finById(Long id) {
+    public Cozinha buscar(Long id) {
         return manager.find(Cozinha.class, id);
     }
 
@@ -35,7 +34,7 @@ public class CozinhaRepositoryImpl implements CozinhaRepository {
     @Transactional
     @Override
     public void remove(Long id) {
-        Cozinha cozinha = finById(id);
+        Cozinha cozinha = buscar(id);
         if (cozinha == null) {
             throw new EmptyResultDataAccessException(1);
         }

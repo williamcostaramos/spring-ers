@@ -6,8 +6,8 @@ import java.util.List;
 
 public interface EstadoRepository{
     List<Estado> listAll();
-    Estado findById(Long id);
+    Estado buscar(Long id);
     Estado salvar(Estado estado);
-    void remover(Estado estado);
+    void remover(Long id);
 
 }
