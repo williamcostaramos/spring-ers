@@ -3,7 +3,6 @@ package com.williamramos.cursoalgaworks.domain.service;
 import com.williamramos.cursoalgaworks.domain.model.Estado;
 import com.williamramos.cursoalgaworks.domain.repository.EstadoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 
 import java.util.List;
@@ -13,7 +12,7 @@ public class EstadoService {
     private EstadoRepository repository;
 
     public List<Estado> listarTodos() {
-        List<Estado> estados = repository.listAll();
+        List<Estado> estados = repository.findAll();
         if (estados == null) {
             throw new EmptyResultDataAccessException(1);
         }
@@ -21,7 +20,7 @@ public class EstadoService {
     }
 
     public Estado buscar(Long id) {
-        Estado obj = repository.buscar(id);
+        Estado obj = repository.findById(id).get();
         if (obj == null) {
             throw new EmptyResultDataAccessException(1);
         }
@@ -29,7 +28,7 @@ public class EstadoService {
     }
 
     public Estado salvar(Estado estado){
-        Estado obj = repository.salvar(estado);
+        Estado obj = repository.save(estado);
         if(obj != null){
         }
         return obj;

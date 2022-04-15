@@ -1,14 +1,11 @@
 package com.williamramos.cursoalgaworks.api.controller;
 
 import com.williamramos.cursoalgaworks.api.model.Endereco;
-import com.williamramos.cursoalgaworks.domain.model.Cliente;
 import com.williamramos.cursoalgaworks.domain.model.Usuario;
-import com.williamramos.cursoalgaworks.domain.model.enums.TipoUsuario;
 import com.williamramos.cursoalgaworks.domain.repository.UsuarioRepository;
 import com.williamramos.cursoalgaworks.service.AtivacaoClienteService;
 import com.williamramos.cursoalgaworks.service.EmissaoNotaFiscalService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 

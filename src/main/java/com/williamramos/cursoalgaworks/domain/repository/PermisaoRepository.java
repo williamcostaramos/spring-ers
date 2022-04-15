@@ -1,12 +1,8 @@
 package com.williamramos.cursoalgaworks.domain.repository;
 
 import com.williamramos.cursoalgaworks.domain.model.Permissao;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.List;
+public interface PermisaoRepository extends JpaRepository<Permissao, Long> {
 
-public interface PermisaoRepository {
-    List<Permissao> listAll();
-    Permissao buscar(Long id);
-    Permissao salvar(Permissao permissao);
-    void remover(Permissao permissao);
 }

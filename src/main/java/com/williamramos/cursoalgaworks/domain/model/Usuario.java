@@ -2,9 +2,9 @@ package com.williamramos.cursoalgaworks.domain.model;
 
 import com.williamramos.cursoalgaworks.domain.model.enums.TipoUsuario;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "tb_user")
@@ -15,6 +15,12 @@ public class Usuario extends BaseEntity {
     private String senha;
     @Column(name = "tipo")
     private TipoUsuario tipoUsuario;
+
+    @ManyToMany
+    @JoinTable(name = "tb_usuario_grupo",
+            joinColumns = @JoinColumn(name = "id_tb_usuario"),
+            inverseJoinColumns = @JoinColumn(name = "id_tb_grupo"))
+    private List<Grupo> grupos = new ArrayList<>();
 
 
     public Usuario() {
@@ -43,5 +49,13 @@ public class Usuario extends BaseEntity {
 
     public void setTipoUsuario(TipoUsuario tipoUsuario) {
         this.tipoUsuario = tipoUsuario;
+    }
+
+    public List<Grupo> getGrupos() {
+        return grupos;
+    }
+
+    public void setGrupos(List<Grupo> grupos) {
+        this.grupos = grupos;
     }
 }

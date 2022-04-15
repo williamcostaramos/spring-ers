@@ -13,7 +13,9 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.print.attribute.standard.Media;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/cozinhas")
@@ -42,11 +44,22 @@ public class CozinhaController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Cozinha> buscar(@PathVariable Long id) {
-        Cozinha obj = service.buscar(id);
-        if (obj != null) {
-            return ResponseEntity.status(HttpStatus.OK).body(obj);
+        Optional<Cozinha> obj = service.buscar(id);
+        if (obj.isPresent()) {
+            return ResponseEntity.status(HttpStatus.OK).body(obj.get());
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+
+    }
+
+    @GetMapping(value = "/consultar-por-nome", produces = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<?> consultarPorNome(@RequestParam(name = "nome") String nome) {
+        List<Cozinha> cozinha = service.consultarPorNome(nome);
+        if (cozinha.size() ==0) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(cozinha);
+
 
     }
 
@@ -62,11 +75,11 @@ public class CozinhaController {
 
     @PutMapping("/{id}")
     public ResponseEntity<Cozinha> salvar(@PathVariable Long id, @RequestBody Cozinha cozinha) {
-        Cozinha obj = service.buscar(id);
-        if (obj != null) {
-            BeanUtils.copyProperties(cozinha, obj, "id");
-            obj = service.salvar(obj);
-            return ResponseEntity.status(HttpStatus.OK).body(obj);
+        Optional<Cozinha> obj = service.buscar(id);
+        if (obj.isPresent()) {
+            BeanUtils.copyProperties(cozinha, obj.get(), "id");
+            Cozinha cozinhaAtualizada = service.salvar(obj.get());
+            return ResponseEntity.status(HttpStatus.OK).body(cozinhaAtualizada);
         }
         return ResponseEntity.notFound().build();
     }
