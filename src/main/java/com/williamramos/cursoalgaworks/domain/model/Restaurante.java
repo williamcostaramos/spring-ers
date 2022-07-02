@@ -1,9 +1,16 @@
 package com.williamramos.cursoalgaworks.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "tb_restaurante")
@@ -13,10 +20,12 @@ public class Restaurante extends BaseEntity{
     @Column(name = "taxa_frete")
     private BigDecimal taxaFrete;
 
+    @JsonIgnore
     @Embedded
     private Endereco endereco;
 
-    @ManyToOne()
+    @JsonIgnoreProperties({"hibernateLazyInitializer"})
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cozinha_id")
     private Cozinha cozinha;
 
@@ -27,8 +36,9 @@ public class Restaurante extends BaseEntity{
     )
     private List<FormaPagamento> formaPagamentos = new ArrayList<>();
 
+    @Fetch(FetchMode.JOIN)
     @OneToMany(mappedBy = "restaurante")
-    private List<Produto> produtos = new ArrayList<>();
+    private Set<Produto> produtos = new HashSet<>();
 
     public String getNome() {
         return nome;
@@ -70,11 +80,11 @@ public class Restaurante extends BaseEntity{
         this.endereco = endereco;
     }
 
-    public List<Produto> getProdutos() {
+    public Set<Produto> getProdutos() {
         return produtos;
     }
 
-    public void setProdutos(List<Produto> produtos) {
+    public void setProdutos(Set<Produto> produtos) {
         this.produtos = produtos;
     }
 }

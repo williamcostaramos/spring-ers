@@ -17,6 +17,11 @@ import java.util.List;
 
 @Service
 public class RestauranteService {
+
+    private final String MSG_RESTAURANTE_NAO_ENCONTRADO = "Restaurante de codigo %d, não encontrada";
+    private final String MSG_COZINHA_NAO_ENCONTRADO = "Cozinha de codigo %d, não encontrada";
+    private final String MSG_RESTAURANTE_EM_USO = "Restaurante de codigo %d não pode ser removida, pois está em uso";
+
     @Autowired
     private RestauranteRepository repository;
     @Autowired
@@ -31,26 +36,23 @@ public class RestauranteService {
     }
 
     public Restaurante buscar(Long id) {
-        try {
-            Restaurante restaurante = repository.findById(id).get();
-            return (restaurante != null ? restaurante: null);
-        } catch (EmptyResultDataAccessException e) {
-            throw new EntidadeNaoEncontradaException(String.format("Restaurante de codigo %d, não encontrada", id));
-        }
+        return repository.findById(id).orElseThrow(() -> new EntidadeNaoEncontradaException(String.format(MSG_RESTAURANTE_NAO_ENCONTRADO, id)));
     }
-    public List<Restaurante> buscarPorNomeTaxaFrete(String nome, BigDecimal taxaFreteInicial, BigDecimal taxaFreteFinal){
-        return repository.find(nome,taxaFreteInicial, taxaFreteFinal);
-    }
-    public List<Restaurante> restauranteComFreteGratis(String nome){
 
-        return  repository.findAll(RestauranteSpecs.comFreteGratis().and(RestauranteSpecs.comNomeSemelhante(nome)));
+    public List<Restaurante> buscarPorNomeTaxaFrete(String nome, BigDecimal taxaFreteInicial, BigDecimal taxaFreteFinal) {
+        return repository.find(nome, taxaFreteInicial, taxaFreteFinal);
+    }
+
+    public List<Restaurante> restauranteComFreteGratis(String nome) {
+
+        return repository.findAll(RestauranteSpecs.comFreteGratis().and(RestauranteSpecs.comNomeSemelhante(nome)));
     }
 
     public Restaurante salvar(Restaurante restaurante) {
         Long idCozinha = restaurante.getCozinha().getId();
         Cozinha obj = cozinhaRepository.findById(idCozinha).get();
         if (obj == null) {
-            throw new EntidadeNaoEncontradaException(String.format("Cozinha de codigo %d, não encontrada", idCozinha));
+            throw new EntidadeNaoEncontradaException(String.format(MSG_COZINHA_NAO_ENCONTRADO, idCozinha));
         }
         return repository.save(restaurante);
     }
@@ -59,9 +61,9 @@ public class RestauranteService {
         try {
             repository.deleteById(id);
         } catch (EmptyResultDataAccessException e) {
-            throw new EntidadeNaoEncontradaException(String.format("Restaurante de codigo %d, não encontrada", id));
+            throw new EntidadeNaoEncontradaException(String.format(MSG_RESTAURANTE_NAO_ENCONTRADO, id));
         } catch (DataIntegrityViolationException e) {
-            throw new EntidadeEmUsoException(String.format("Restaurante de codigo %d não pode ser removida, pois está em uso", id));
+            throw new EntidadeEmUsoException(String.format(MSG_RESTAURANTE_EM_USO, id));
         }
     }
 

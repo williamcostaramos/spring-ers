@@ -10,10 +10,13 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class CozinhaService {
+
+    private final String MSG_COZINHA_NAO_ENCONTRADA = "Cozinha de codigo %d, não encontrada";
+    private final String MSG_COZINHA_EM_USO = "Cozinha de codigo %d não pode ser removida, pois está em uso";
+
     @Autowired
     private CozinhaRepository repository;
 
@@ -21,8 +24,8 @@ public class CozinhaService {
         return repository.findAll();
     }
 
-    public Optional<Cozinha> buscar(Long id) {
-        return repository.findById(id);
+    public Cozinha buscar(Long id) {
+        return repository.findById(id).orElseThrow(() -> new EntidadeNaoEncontradaException(MSG_COZINHA_NAO_ENCONTRADA));
     }
     public List<Cozinha> consultarPorNome(String nome){
         return repository.findByNomeContaining(nome);
@@ -36,9 +39,9 @@ public class CozinhaService {
         try {
             repository.deleteById(id);
         } catch (EmptyResultDataAccessException e) {
-            throw new EntidadeNaoEncontradaException(String.format("Cozinha de codigo %d, não encontrada", id));
+            throw new EntidadeNaoEncontradaException(String.format(MSG_COZINHA_NAO_ENCONTRADA, id));
         } catch (DataIntegrityViolationException e) {
-            throw new EntidadeEmUsoException(String.format("Cozinha de codigo %d não pode ser removida, pois está em uso", id));
+            throw new EntidadeEmUsoException(String.format(MSG_COZINHA_EM_USO, id));
         }
     }
 }

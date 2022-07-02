@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.williamramos.cursoalgaworks.api.model.RestauranteWrapper;
 import com.williamramos.cursoalgaworks.domain.exception.EntidadeEmUsoException;
 import com.williamramos.cursoalgaworks.domain.exception.EntidadeNaoEncontradaException;
+import com.williamramos.cursoalgaworks.domain.exception.NegocioException;
 import com.williamramos.cursoalgaworks.domain.model.Restaurante;
 import com.williamramos.cursoalgaworks.domain.service.RestauranteService;
 import org.springframework.beans.BeanUtils;
@@ -40,12 +41,8 @@ public class RestauranteController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Restaurante> buscar(@PathVariable Long id) {
-        Restaurante obj = service.buscar(id);
-        if (obj != null) {
-            return ResponseEntity.status(HttpStatus.OK).body(obj);
-        }
-        return ResponseEntity.notFound().build();
+    public Restaurante buscar(@PathVariable Long id) {
+       return service.buscar(id);
     }
     @GetMapping("/consultar-por-nome-taxa-frete")
     public List<Restaurante> consultaPorNomeTaxaFrete(String nome, BigDecimal taxaFreteInicial, BigDecimal taxaFreteFinal){
@@ -59,11 +56,12 @@ public class RestauranteController {
 
     @PostMapping()
     public ResponseEntity<Restaurante> salvar(@RequestBody Restaurante restaurante) {
-        Restaurante obj = service.salvar(restaurante);
-        if (obj != null) {
-            return ResponseEntity.status(HttpStatus.OK).body(obj);
+        try{
+            Restaurante rest = service.salvar(restaurante);
+            return ResponseEntity.ok(rest);
+        }catch (EntidadeNaoEncontradaException e){
+            throw new NegocioException(e.getMessage());
         }
-        return ResponseEntity.internalServerError().body(obj);
     }
 
 //    @PutMapping("/{id}")

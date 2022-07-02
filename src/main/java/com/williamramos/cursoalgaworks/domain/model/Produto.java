@@ -15,7 +15,7 @@ public class Produto extends BaseEntity {
     @Column(name = "ativo")
     private Boolean ativo;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "restaurante_id")
     private Restaurante restaurante;
 
