@@ -2,6 +2,7 @@ package com.williamramos.cursoalgaworks.domain.service;
 
 import com.williamramos.cursoalgaworks.domain.exception.EntidadeEmUsoException;
 import com.williamramos.cursoalgaworks.domain.exception.EntidadeNaoEncontradaException;
+import com.williamramos.cursoalgaworks.domain.exception.RestauranteNaoEncontradoException;
 import com.williamramos.cursoalgaworks.domain.model.Cozinha;
 import com.williamramos.cursoalgaworks.domain.model.Restaurante;
 import com.williamramos.cursoalgaworks.domain.repository.CozinhaRepository;
@@ -36,7 +37,7 @@ public class RestauranteService {
     }
 
     public Restaurante buscar(Long id) {
-        return repository.findById(id).orElseThrow(() -> new EntidadeNaoEncontradaException(String.format(MSG_RESTAURANTE_NAO_ENCONTRADO, id)));
+        return repository.findById(id).orElseThrow(() -> new RestauranteNaoEncontradoException(id));
     }
 
     public List<Restaurante> buscarPorNomeTaxaFrete(String nome, BigDecimal taxaFreteInicial, BigDecimal taxaFreteFinal) {
@@ -61,7 +62,7 @@ public class RestauranteService {
         try {
             repository.deleteById(id);
         } catch (EmptyResultDataAccessException e) {
-            throw new EntidadeNaoEncontradaException(String.format(MSG_RESTAURANTE_NAO_ENCONTRADO, id));
+            throw new RestauranteNaoEncontradoException(id);
         } catch (DataIntegrityViolationException e) {
             throw new EntidadeEmUsoException(String.format(MSG_RESTAURANTE_EM_USO, id));
         }

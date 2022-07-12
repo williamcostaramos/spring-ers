@@ -1,8 +1,10 @@
 package com.williamramos.cursoalgaworks.api.controller;
 
 import com.williamramos.cursoalgaworks.api.model.CozinhaWrapper;
+import com.williamramos.cursoalgaworks.domain.exception.CozinhaNaoEncontradaException;
 import com.williamramos.cursoalgaworks.domain.exception.EntidadeEmUsoException;
 import com.williamramos.cursoalgaworks.domain.exception.EntidadeNaoEncontradaException;
+import com.williamramos.cursoalgaworks.domain.exception.NegocioException;
 import com.williamramos.cursoalgaworks.domain.model.Cozinha;
 import com.williamramos.cursoalgaworks.domain.service.CozinhaService;
 import org.springframework.beans.BeanUtils;
@@ -13,7 +15,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/cozinhas")
@@ -70,18 +71,20 @@ public class CozinhaController {
     public Cozinha salvar(@PathVariable Long id, @RequestBody Cozinha cozinha) {
         Cozinha obj = service.buscar(id);
         BeanUtils.copyProperties(cozinha, obj, "id");
+
+
         return service.salvar(obj);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity remover(@PathVariable Long id) {
+    public ResponseEntity<?> remover(@PathVariable Long id) {
         try {
             service.remover(id);
             return ResponseEntity.noContent().build();
-        } catch (EntidadeNaoEncontradaException e) {
-            return ResponseEntity.notFound().build();
+        } catch (CozinhaNaoEncontradaException e) {
+            throw new CozinhaNaoEncontradaException(id);
         } catch (EntidadeEmUsoException e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+            throw new EntidadeEmUsoException(id.toString());
         }
 
     }
