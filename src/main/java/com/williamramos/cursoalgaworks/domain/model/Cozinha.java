@@ -15,6 +15,7 @@ import java.util.List;
 @Table(name = "tb_cozinha")
 @JsonRootName("cozinha")
 public class Cozinha extends BaseEntity{
+
     @JsonProperty("nome")
     @Column(name = "nome")
     private String nome;

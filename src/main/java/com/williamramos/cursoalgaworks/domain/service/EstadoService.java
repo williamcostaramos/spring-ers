@@ -2,6 +2,7 @@ package com.williamramos.cursoalgaworks.domain.service;
 
 import com.williamramos.cursoalgaworks.domain.exception.EntidadeEmUsoException;
 import com.williamramos.cursoalgaworks.domain.exception.EntidadeNaoEncontradaException;
+import com.williamramos.cursoalgaworks.domain.exception.EstadoEmUsoException;
 import com.williamramos.cursoalgaworks.domain.exception.EstadoNaoEncontradoException;
 import com.williamramos.cursoalgaworks.domain.model.Estado;
 import com.williamramos.cursoalgaworks.domain.repository.EstadoRepository;
@@ -14,15 +15,13 @@ import java.util.List;
 
 @Service
 public class EstadoService {
-
-    private final String MSG_ESTADO_EM_USO = "Estado de código %d não pode ser removido, pois está em uso";
     @Autowired
     private EstadoRepository repository;
 
     public List<Estado> listarTodos() {
         List<Estado> estados = repository.findAll();
         if (estados == null) {
-            throw new EmptyResultDataAccessException(1);
+            throw new EstadoNaoEncontradoException();
         }
         return estados;
     }
@@ -42,9 +41,9 @@ public class EstadoService {
         try {
             this.repository.deleteById(idEstado);
         } catch (EmptyResultDataAccessException e) {
-            throw new EstadoNaoEncontradoException( idEstado);
+            throw new EstadoNaoEncontradoException(idEstado);
         } catch (DataIntegrityViolationException e) {
-            throw new EntidadeEmUsoException(String.format(MSG_ESTADO_EM_USO, idEstado));
+            throw new EstadoEmUsoException(idEstado);
         }
     }
 }

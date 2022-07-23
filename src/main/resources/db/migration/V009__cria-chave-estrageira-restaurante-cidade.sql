@@ -1,0 +1,2 @@
+ALTER TABLE sgc.tb_restaurante ADD CONSTRAINT fk_restaurante_cidade_id FOREIGN KEY (cidade_id) REFERENCES sgc.tb_cidade(id);
+ALTER TABLE sgc.tb_restaurante ADD CONSTRAINT fk_restaurante_cozinha_id FOREIGN KEY (cozinha_id) REFERENCES sgc.tb_cozinha(id);

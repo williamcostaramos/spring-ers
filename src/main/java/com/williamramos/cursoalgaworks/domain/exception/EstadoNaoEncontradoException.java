@@ -2,6 +2,10 @@ package com.williamramos.cursoalgaworks.domain.exception;
 
 public class EstadoNaoEncontradoException extends EntidadeNaoEncontradaException{
 
+    public EstadoNaoEncontradoException() {
+        super("Estado Não encontrado");
+    }
+
     public EstadoNaoEncontradoException(String mensagem) {
         super(mensagem);
     }

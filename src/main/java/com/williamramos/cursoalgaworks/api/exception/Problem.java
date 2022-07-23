@@ -1,9 +1,10 @@
 package com.williamramos.cursoalgaworks.api.exception;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import org.springframework.http.HttpStatus;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 
@@ -12,6 +13,20 @@ public class Problem {
     private String type;
     private String title;
     private String detail;
+    private List<FieldProblem> fields =new ArrayList<>();
+
+    public Problem() {
+    }
+
+    public Problem(int status, String type, String title, String detail, List<FieldProblem> fields, String userMessage, LocalDateTime timestamp) {
+        this.status = status;
+        this.type = type;
+        this.title = title;
+        this.detail = detail;
+        this.fields = fields;
+        this.userMessage = userMessage;
+        this.timestamp = timestamp;
+    }
 
     private String userMessage;
     private LocalDateTime timestamp;
@@ -46,6 +61,15 @@ public class Problem {
         return this;
     }
 
+    public Problem problemList(List<FieldProblem> problemList) {
+        this.fields = problemList;
+        return this;
+    }
+
+    public List<FieldProblem> getFields() {
+        return fields;
+    }
+
     public int getStatus() {
         return status;
     }
@@ -69,5 +93,7 @@ public class Problem {
     public LocalDateTime getTimestamp() {
         return timestamp;
     }
+
+
 }
 

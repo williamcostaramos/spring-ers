@@ -15,9 +15,6 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 @Service
 public class CidadeService {
-    private final String MSG_CIDADE_NAO_ENCONTRADO = "Cidade de codigo %d, não encontrada";
-    private final String MSG_CIDADE_EM_USO = "Cidade de código %d não pode ser removido, pois está em uso";
-
     @Autowired
     private CidadeRepository repository;
     @Autowired

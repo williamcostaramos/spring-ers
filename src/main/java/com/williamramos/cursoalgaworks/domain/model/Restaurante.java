@@ -2,37 +2,61 @@ package com.williamramos.cursoalgaworks.domain.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.williamramos.cursoalgaworks.core.annotation.Multiplo;
+import com.williamramos.cursoalgaworks.core.annotation.TaxaFrete;
+import com.williamramos.cursoalgaworks.core.annotation.ValorZeroIncluirDescricao;
+import com.williamramos.cursoalgaworks.core.validation.Groups;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PositiveOrZero;
+import javax.validation.groups.ConvertGroup;
+import javax.validation.groups.Default;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
+@ValorZeroIncluirDescricao(valorField = "taxaFrete", descricaoField = "nome", descricaoObrigatoria = "frete gratis")
 @Entity
 @Table(name = "tb_restaurante")
-public class Restaurante extends BaseEntity{
+public class Restaurante {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @NotBlank()
     @Column(name = "nome")
     private String nome;
+
+
+
     @Column(name = "taxa_frete")
     private BigDecimal taxaFrete;
 
     @JsonIgnore
     @Embedded
+    
     private Endereco endereco;
 
+    @NotNull()
+    @ConvertGroup(from = Default.class, to = Groups.CozinhaId.class)
     @JsonIgnoreProperties({"hibernateLazyInitializer"})
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cozinha_id")
+
+    @Valid
     private Cozinha cozinha;
 
     @ManyToMany
     @JoinTable(name = "tb_restaurante_forma_pagamento",
             joinColumns = @JoinColumn(name = "restaurante_id"),
-            inverseJoinColumns = @JoinColumn(name ="forma_pagamento_id")
+            inverseJoinColumns = @JoinColumn(name = "forma_pagamento_id")
     )
     private List<FormaPagamento> formaPagamentos = new ArrayList<>();
 
@@ -86,5 +110,13 @@ public class Restaurante extends BaseEntity{
 
     public void setProdutos(Set<Produto> produtos) {
         this.produtos = produtos;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 }

@@ -3,7 +3,9 @@ package com.williamramos.cursoalgaworks.api.controller;
 import com.williamramos.cursoalgaworks.domain.exception.EstadoNaoEncontradoException;
 import com.williamramos.cursoalgaworks.domain.exception.NegocioException;
 import com.williamramos.cursoalgaworks.domain.model.Cidade;
+import com.williamramos.cursoalgaworks.domain.model.Estado;
 import com.williamramos.cursoalgaworks.domain.service.CidadeService;
+import com.williamramos.cursoalgaworks.domain.service.EstadoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,26 +13,26 @@ import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping("/cidades")
-public class CidadeController {
+@RequestMapping("/estados")
+public class EstadoController {
     @Autowired
-    private CidadeService service;
+    private EstadoService service;
 
     @GetMapping
-    public List<Cidade> listar() {
+    public List<Estado> listar() {
         return service.listarTodos();
     }
 
     @GetMapping({"/id"})
-    public Cidade buscar(@PathVariable Long id) {
+    public Estado buscar(@PathVariable Long id) {
         return service.buscar(id);
     }
 
     @PostMapping
-    public Cidade salvar(@RequestBody @Valid Cidade cidade) {
+    public Estado salvar(@RequestBody  Estado estado) {
 
         try {
-            return service.salvar(cidade);
+            return service.salvar(estado);
         } catch (EstadoNaoEncontradoException e) {
             throw new NegocioException(e.getMessage(), e);
         }

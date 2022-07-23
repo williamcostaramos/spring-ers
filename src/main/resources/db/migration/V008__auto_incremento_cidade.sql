@@ -1,0 +1,1 @@
+ALTER TABLE sgc.tb_cidade MODIFY COLUMN id bigint auto_increment NOT NULL;

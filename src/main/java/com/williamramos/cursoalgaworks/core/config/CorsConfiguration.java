@@ -1,4 +1,4 @@
-package com.williamramos.cursoalgaworks.configuration;
+package com.williamramos.cursoalgaworks.core.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
