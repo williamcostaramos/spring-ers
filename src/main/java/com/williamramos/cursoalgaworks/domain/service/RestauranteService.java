@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -49,6 +50,7 @@ public class RestauranteService {
         return repository.findAll(RestauranteSpecs.comFreteGratis().and(RestauranteSpecs.comNomeSemelhante(nome)));
     }
 
+    @Transactional
     public Restaurante salvar(Restaurante restaurante) {
         Long idCozinha = restaurante.getCozinha().getId();
         Cozinha obj = cozinhaRepository.findById(idCozinha).get();
@@ -58,6 +60,7 @@ public class RestauranteService {
         return repository.save(restaurante);
     }
 
+    @Transactional
     public void remover(Long id) {
         try {
             repository.deleteById(id);

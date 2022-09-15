@@ -1,5 +1,6 @@
 package com.williamramos.cursoalgaworks.api.controller;
 
+import com.williamramos.cursoalgaworks.api.model.CozinhaDTO;
 import com.williamramos.cursoalgaworks.api.model.CozinhaWrapper;
 import com.williamramos.cursoalgaworks.domain.exception.CozinhaNaoEncontradaException;
 import com.williamramos.cursoalgaworks.domain.exception.EntidadeEmUsoException;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/cozinhas")
@@ -24,8 +26,8 @@ public class CozinhaController {
     private CozinhaService service;
 
     @GetMapping()
-    public ResponseEntity<List<Cozinha>> listar() {
-        List<Cozinha> cozinhas = service.listarTodas();
+    public ResponseEntity<List<CozinhaDTO>> listar() {
+        List<CozinhaDTO> cozinhas = toDTOList(service.listarTodas());
         if (cozinhas != null) {
             return ResponseEntity.status(HttpStatus.OK).body(cozinhas);
         }
@@ -49,7 +51,7 @@ public class CozinhaController {
 
     @GetMapping(value = "/consultar-por-nome", produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<?> consultarPorNome(@RequestParam(name = "nome") String nome) {
-        List<Cozinha> cozinha = service.consultarPorNome(nome);
+        List<CozinhaDTO> cozinha = toDTOList(service.consultarPorNome(nome));
         if (cozinha.size() == 0) {
             return ResponseEntity.notFound().build();
         }
@@ -59,8 +61,8 @@ public class CozinhaController {
     }
 
     @PostMapping
-    public ResponseEntity<Cozinha> salvar(@RequestBody @Valid  Cozinha cozinha) {
-        Cozinha obj = service.salvar(cozinha);
+    public ResponseEntity<CozinhaDTO> salvar(@RequestBody @Valid Cozinha cozinha) {
+        CozinhaDTO obj = toDTO(service.salvar(cozinha));
         if (obj != null) {
 
             return ResponseEntity.status(HttpStatus.CREATED).body(obj);
@@ -69,12 +71,12 @@ public class CozinhaController {
     }
 
     @PutMapping("/{id}")
-    public Cozinha salvar(@PathVariable Long id, @RequestBody Cozinha cozinha) {
+    public CozinhaDTO salvar(@PathVariable Long id, @RequestBody Cozinha cozinha) {
         Cozinha obj = service.buscar(id);
         BeanUtils.copyProperties(cozinha, obj, "id");
 
 
-        return service.salvar(obj);
+        return toDTO(service.salvar(obj));
     }
 
     @DeleteMapping("/{id}")
@@ -88,6 +90,16 @@ public class CozinhaController {
             throw new EntidadeEmUsoException(id.toString());
         }
 
+    }
+
+    private CozinhaDTO toDTO(Cozinha cozinha) {
+        CozinhaDTO cozinhaDTO = new CozinhaDTO();
+        cozinhaDTO.setId(cozinha.getId());
+        cozinhaDTO.setNome(cozinha.getNome());
+        return cozinhaDTO;
+    }
+    private List<CozinhaDTO> toDTOList(List<Cozinha> cozinhas){
+        return cozinhas.stream().map(cozinha -> toDTO(cozinha)).collect(Collectors.toList());
     }
 
 }

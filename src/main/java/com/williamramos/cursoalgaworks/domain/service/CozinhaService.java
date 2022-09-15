@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -27,10 +28,12 @@ public class CozinhaService {
         return repository.findByNomeContaining(nome);
     }
 
+    @Transactional
     public Cozinha salvar(Cozinha cozinha) {
         return repository.save(cozinha);
     }
 
+    @Transactional
     public void remover(Long id) {
         try {
             repository.deleteById(id);

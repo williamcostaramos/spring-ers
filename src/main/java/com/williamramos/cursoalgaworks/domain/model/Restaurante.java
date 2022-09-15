@@ -30,7 +30,7 @@ public class Restaurante {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank()
+
     @Column(name = "nome")
     private String nome;
 
@@ -38,16 +38,12 @@ public class Restaurante {
 
     @Column(name = "taxa_frete")
     private BigDecimal taxaFrete;
-
-    @JsonIgnore
     @Embedded
     
     private Endereco endereco;
 
-    @NotNull()
-    @ConvertGroup(from = Default.class, to = Groups.CozinhaId.class)
-    @JsonIgnoreProperties({"hibernateLazyInitializer"})
-    @ManyToOne(fetch = FetchType.LAZY)
+
+    @ManyToOne()
     @JoinColumn(name = "cozinha_id")
 
     @Valid
