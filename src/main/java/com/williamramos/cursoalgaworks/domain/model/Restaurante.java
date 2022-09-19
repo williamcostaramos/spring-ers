@@ -17,10 +17,8 @@ import javax.validation.constraints.PositiveOrZero;
 import javax.validation.groups.ConvertGroup;
 import javax.validation.groups.Default;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+
 @ValorZeroIncluirDescricao(valorField = "taxaFrete", descricaoField = "nome", descricaoObrigatoria = "frete gratis")
 @Entity
 @Table(name = "tb_restaurante")
@@ -35,11 +33,13 @@ public class Restaurante {
     private String nome;
 
 
-
     @Column(name = "taxa_frete")
     private BigDecimal taxaFrete;
+
+    @Column(name = "ativo")
+    private Boolean ativo = Boolean.TRUE;
+
     @Embedded
-    
     private Endereco endereco;
 
 
@@ -114,5 +114,33 @@ public class Restaurante {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Boolean getAtivo() {
+        return ativo;
+    }
+
+    public void setAtivo(Boolean ativo) {
+        this.ativo = ativo;
+    }
+    public void ativar(){
+        this.ativo = true;
+    }
+    public void inativar(){
+        this.ativo = false;
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Restaurante that = (Restaurante) o;
+        return Objects.equals(getId(), that.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId());
     }
 }

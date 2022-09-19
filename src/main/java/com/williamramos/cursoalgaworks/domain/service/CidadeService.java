@@ -43,6 +43,7 @@ public class CidadeService {
     public void remover(Long idCidade) {
         try {
             this.repository.deleteById(idCidade);
+            this.repository.flush();
         } catch (EmptyResultDataAccessException e) {
             throw new CidadeNaoEncontradaException(idCidade);
         } catch (DataIntegrityViolationException e) {

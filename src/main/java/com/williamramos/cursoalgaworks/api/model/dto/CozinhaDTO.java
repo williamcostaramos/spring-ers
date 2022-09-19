@@ -1,4 +1,4 @@
-package com.williamramos.cursoalgaworks.api.model;
+package com.williamramos.cursoalgaworks.api.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 

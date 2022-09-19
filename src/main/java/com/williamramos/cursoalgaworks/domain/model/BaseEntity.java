@@ -12,7 +12,6 @@ import java.util.Objects;
 
 @MappedSuperclass
 public abstract class BaseEntity implements  Serializable{
-    @NotNull(groups = Groups.CozinhaId.class)
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

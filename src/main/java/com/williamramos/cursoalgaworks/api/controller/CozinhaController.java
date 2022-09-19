@@ -1,11 +1,10 @@
 package com.williamramos.cursoalgaworks.api.controller;
 
-import com.williamramos.cursoalgaworks.api.model.CozinhaDTO;
+import com.williamramos.cursoalgaworks.api.converter.Converter;
+import com.williamramos.cursoalgaworks.api.model.dto.CozinhaDTO;
 import com.williamramos.cursoalgaworks.api.model.CozinhaWrapper;
-import com.williamramos.cursoalgaworks.domain.exception.CozinhaNaoEncontradaException;
-import com.williamramos.cursoalgaworks.domain.exception.EntidadeEmUsoException;
-import com.williamramos.cursoalgaworks.domain.exception.EntidadeNaoEncontradaException;
-import com.williamramos.cursoalgaworks.domain.exception.NegocioException;
+import com.williamramos.cursoalgaworks.api.model.input.CozinhaInput;
+import com.williamramos.cursoalgaworks.domain.exception.*;
 import com.williamramos.cursoalgaworks.domain.model.Cozinha;
 import com.williamramos.cursoalgaworks.domain.service.CozinhaService;
 import org.springframework.beans.BeanUtils;
@@ -24,59 +23,53 @@ import java.util.stream.Collectors;
 public class CozinhaController {
     @Autowired
     private CozinhaService service;
+    @Autowired
+    private Converter<Cozinha, CozinhaDTO> converter;
 
     @GetMapping()
     public ResponseEntity<List<CozinhaDTO>> listar() {
-        List<CozinhaDTO> cozinhas = toDTOList(service.listarTodas());
-        if (cozinhas != null) {
-            return ResponseEntity.status(HttpStatus.OK).body(cozinhas);
+        try {
+            List<CozinhaDTO> cozinhas = converter.toDTOList(service.listarTodas());
+            return ResponseEntity.ok(cozinhas);
+        } catch (CozinhaNaoEncontradaException e) {
+            throw new CozinhaNaoEncontradaException(e.getMessage());
         }
-        return ResponseEntity.notFound().build();
     }
-
-    @GetMapping(produces = MediaType.APPLICATION_XML_VALUE)
-    public ResponseEntity<CozinhaWrapper> listarXML() {
-        CozinhaWrapper obj = new CozinhaWrapper(service.listarTodas());
-        if (obj != null) {
-            return ResponseEntity.status(HttpStatus.OK).body(obj);
-        }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-    }
-
-
+    
     @GetMapping("/{id}")
     public Cozinha buscar(@PathVariable Long id) {
         return service.buscar(id);
     }
 
     @GetMapping(value = "/consultar-por-nome", produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<?> consultarPorNome(@RequestParam(name = "nome") String nome) {
-        List<CozinhaDTO> cozinha = toDTOList(service.consultarPorNome(nome));
-        if (cozinha.size() == 0) {
-            return ResponseEntity.notFound().build();
+    public ResponseEntity<List<CozinhaDTO>> consultarPorNome(@RequestParam(name = "nome") String nome) {
+        try {
+            List<CozinhaDTO> cozinhas = converter.toDTOList(service.consultarPorNome(nome));
+            return ResponseEntity.ok(cozinhas);
+        } catch (CozinhaNaoEncontradaException e) {
+            throw new CozinhaNaoEncontradaException(e.getMessage());
         }
-        return ResponseEntity.ok(cozinha);
-
-
     }
 
     @PostMapping
-    public ResponseEntity<CozinhaDTO> salvar(@RequestBody @Valid Cozinha cozinha) {
-        CozinhaDTO obj = toDTO(service.salvar(cozinha));
-        if (obj != null) {
-
-            return ResponseEntity.status(HttpStatus.CREATED).body(obj);
+    public ResponseEntity<CozinhaDTO> salvar(@RequestBody @Valid CozinhaInput input) {
+        try {
+            Cozinha cozinha = converter.inputToDomain(input);
+            return ResponseEntity.ok(converter.toDTO(service.salvar(cozinha)));
+        } catch (Exception e) {
+            throw new NegocioException(e.getMessage());
         }
-        return ResponseEntity.internalServerError().build();
     }
 
     @PutMapping("/{id}")
-    public CozinhaDTO salvar(@PathVariable Long id, @RequestBody Cozinha cozinha) {
-        Cozinha obj = service.buscar(id);
-        BeanUtils.copyProperties(cozinha, obj, "id");
-
-
-        return toDTO(service.salvar(obj));
+    public ResponseEntity<CozinhaDTO> salvar(@PathVariable Long id, @RequestBody @Valid CozinhaInput input) {
+        try {
+            Cozinha cozinha = converter.inputToDomain(input);
+            converter.copyToDomainObject(input, cozinha);
+            return ResponseEntity.ok(converter.toDTO(service.salvar(cozinha)));
+        } catch (CozinhaNaoEncontradaException e) {
+            throw new CozinhaNaoEncontradaException(id);
+        }
     }
 
     @DeleteMapping("/{id}")
@@ -87,19 +80,10 @@ public class CozinhaController {
         } catch (CozinhaNaoEncontradaException e) {
             throw new CozinhaNaoEncontradaException(id);
         } catch (EntidadeEmUsoException e) {
-            throw new EntidadeEmUsoException(id.toString());
+            throw new CozinhaEmUsoException(id);
         }
 
     }
 
-    private CozinhaDTO toDTO(Cozinha cozinha) {
-        CozinhaDTO cozinhaDTO = new CozinhaDTO();
-        cozinhaDTO.setId(cozinha.getId());
-        cozinhaDTO.setNome(cozinha.getNome());
-        return cozinhaDTO;
-    }
-    private List<CozinhaDTO> toDTOList(List<Cozinha> cozinhas){
-        return cozinhas.stream().map(cozinha -> toDTO(cozinha)).collect(Collectors.toList());
-    }
 
 }

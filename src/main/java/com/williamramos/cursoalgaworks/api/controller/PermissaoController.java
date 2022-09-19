@@ -14,8 +14,8 @@ import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping("/cidades")
-public class CidadeController {
+@RequestMapping("/permissoes")
+public class PermissaoController {
     @Autowired
     private CidadeService service;
 

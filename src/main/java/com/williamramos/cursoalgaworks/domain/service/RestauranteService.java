@@ -1,10 +1,10 @@
 package com.williamramos.cursoalgaworks.domain.service;
 
-import com.williamramos.cursoalgaworks.domain.exception.EntidadeEmUsoException;
-import com.williamramos.cursoalgaworks.domain.exception.EntidadeNaoEncontradaException;
-import com.williamramos.cursoalgaworks.domain.exception.RestauranteNaoEncontradoException;
+import com.williamramos.cursoalgaworks.domain.exception.*;
+import com.williamramos.cursoalgaworks.domain.model.Cidade;
 import com.williamramos.cursoalgaworks.domain.model.Cozinha;
 import com.williamramos.cursoalgaworks.domain.model.Restaurante;
+import com.williamramos.cursoalgaworks.domain.repository.CidadeRepository;
 import com.williamramos.cursoalgaworks.domain.repository.CozinhaRepository;
 import com.williamramos.cursoalgaworks.domain.repository.RestauranteRepository;
 import com.williamramos.cursoalgaworks.infraestruture.repository.especification.RestauranteSpecs;
@@ -29,10 +29,13 @@ public class RestauranteService {
     @Autowired
     private CozinhaRepository cozinhaRepository;
 
+    @Autowired
+    private CidadeRepository cidadeRepository;
+
     public List<Restaurante> listarTodos() {
         List<Restaurante> restaurantes = repository.findAll();
         if (restaurantes == null) {
-            throw new EntidadeNaoEncontradaException(String.format("Restaurantes não encontrado"));
+            throw new RestauranteNaoEncontradoException(String.format("Restaurantes não encontrado"));
         }
         return restaurantes;
     }
@@ -52,11 +55,12 @@ public class RestauranteService {
 
     @Transactional
     public Restaurante salvar(Restaurante restaurante) {
-        Long idCozinha = restaurante.getCozinha().getId();
-        Cozinha obj = cozinhaRepository.findById(idCozinha).get();
-        if (obj == null) {
-            throw new EntidadeNaoEncontradaException(String.format(MSG_COZINHA_NAO_ENCONTRADO, idCozinha));
-        }
+        Long cozinhaId = restaurante.getCozinha().getId();
+        Cozinha cozinha = cozinhaRepository.findById(cozinhaId).orElseThrow(() -> new  CozinhaNaoEncontradaException(cozinhaId));
+        Long cidadeId = restaurante.getEndereco().getCidade().getId();
+        Cidade cidade = cidadeRepository.findById(cidadeId).orElseThrow(() -> new CidadeNaoEncontradaException(cidadeId));
+        restaurante.setCozinha(cozinha);
+        restaurante.getEndereco().setCidade(cidade);
         return repository.save(restaurante);
     }
 
@@ -64,11 +68,24 @@ public class RestauranteService {
     public void remover(Long id) {
         try {
             repository.deleteById(id);
+            repository.flush();
         } catch (EmptyResultDataAccessException e) {
             throw new RestauranteNaoEncontradoException(id);
         } catch (DataIntegrityViolationException e) {
             throw new EntidadeEmUsoException(String.format(MSG_RESTAURANTE_EM_USO, id));
         }
+    }
+
+    @Transactional
+    public void ativar(Long id){
+        Restaurante restauranteAtual = repository.getById(id);
+        restauranteAtual.ativar();
+    }
+
+    @Transactional
+    public void inativar(Long id){
+        Restaurante restauranteAtual = repository.getById(id);
+        restauranteAtual.inativar();
     }
 
 }

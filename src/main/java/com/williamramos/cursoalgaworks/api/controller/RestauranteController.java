@@ -1,18 +1,12 @@
 package com.williamramos.cursoalgaworks.api.controller;
 
-import com.williamramos.cursoalgaworks.api.converter.RestauranteConverter;
-import com.williamramos.cursoalgaworks.api.model.CozinhaDTO;
-import com.williamramos.cursoalgaworks.api.model.RestauranteDTO;
+import com.williamramos.cursoalgaworks.api.converter.Converter;
+import com.williamramos.cursoalgaworks.api.model.dto.RestauranteDTO;
 import com.williamramos.cursoalgaworks.api.model.RestauranteWrapper;
 import com.williamramos.cursoalgaworks.api.model.input.RestauranteInput;
-import com.williamramos.cursoalgaworks.domain.exception.CozinhaNaoEncontradaException;
-import com.williamramos.cursoalgaworks.domain.exception.EntidadeEmUsoException;
-import com.williamramos.cursoalgaworks.domain.exception.EntidadeNaoEncontradaException;
-import com.williamramos.cursoalgaworks.domain.exception.NegocioException;
-import com.williamramos.cursoalgaworks.domain.model.Cozinha;
+import com.williamramos.cursoalgaworks.domain.exception.*;
 import com.williamramos.cursoalgaworks.domain.model.Restaurante;
 import com.williamramos.cursoalgaworks.domain.service.RestauranteService;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -23,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/restaurantes")
@@ -35,12 +28,12 @@ public class RestauranteController {
     private SmartValidator validator;
 
     @Autowired
-    private RestauranteConverter converter;
+    private Converter<Restaurante, RestauranteDTO> converter;
 
 
     @GetMapping()
     public ResponseEntity<List<RestauranteDTO>> listar() {
-        List<RestauranteDTO> restaurantes = converter.toDTOCollect(service.listarTodos());
+        List<RestauranteDTO> restaurantes = converter.toDTOList(service.listarTodos());
         return ResponseEntity.status(HttpStatus.OK).body(restaurantes);
     }
 
@@ -58,12 +51,12 @@ public class RestauranteController {
 
     @GetMapping("/consultar-por-nome-taxa-frete")
     public List<RestauranteDTO> consultaPorNomeTaxaFrete(String nome, BigDecimal taxaFreteInicial, BigDecimal taxaFreteFinal) {
-        return converter.toDTOCollect(service.buscarPorNomeTaxaFrete(nome, taxaFreteInicial, taxaFreteFinal));
+        return converter.toDTOList(service.buscarPorNomeTaxaFrete(nome, taxaFreteInicial, taxaFreteFinal));
     }
 
     @GetMapping("/restaurante-com-frete-gratis")
     public List<RestauranteDTO> restauranteComFreteGratis(String nome) {
-        return converter.toDTOCollect(service.restauranteComFreteGratis(nome));
+        return converter.toDTOList(service.restauranteComFreteGratis(nome));
     }
 
     @PostMapping()
@@ -72,7 +65,7 @@ public class RestauranteController {
             Restaurante restaurante = converter.inputToDomain(restauranteInput);
             RestauranteDTO rest = converter.toDTO(service.salvar(restaurante));
             return ResponseEntity.ok(rest);
-        } catch (EntidadeNaoEncontradaException e) {
+        } catch (CozinhaNaoEncontradaException | CidadeNaoEncontradaException e) {
             throw new NegocioException(e.getMessage());
         }
     }
@@ -81,12 +74,11 @@ public class RestauranteController {
     public ResponseEntity<?> salvar(@PathVariable Long id, @RequestBody @Valid RestauranteInput restaurante) {
         try {
             Restaurante restauranteAtual = service.buscar(id);
-            BeanUtils.copyProperties(restaurante, restauranteAtual,
-                    "id", "formasPagamento", "endereco", "dataCadastro", "produtos");
-            service.salvar(restauranteAtual);
+            converter.copyToDomainObject(restaurante, restauranteAtual);
+            restauranteAtual = service.salvar(restauranteAtual);
             return ResponseEntity.ok(converter.toDTO(restauranteAtual));
 
-        } catch (CozinhaNaoEncontradaException e) {
+        } catch (CozinhaNaoEncontradaException | CidadeNaoEncontradaException e) {
             throw new NegocioException(e.getMessage());
         }
 
@@ -98,10 +90,22 @@ public class RestauranteController {
             service.remover(id);
             return ResponseEntity.noContent().build();
         } catch (EntidadeNaoEncontradaException e) {
-            return ResponseEntity.notFound().build();
+            throw new RestauranteNaoEncontradoException(id);
         } catch (EntidadeEmUsoException e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+            throw new RestauranteEmUsoException(id);
         }
+    }
+
+    @PutMapping("/{id}/ativo")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void ativar(@PathVariable Long id) {
+        service.ativar(id);
+    }
+
+    @DeleteMapping("/{id}/ativo")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void inativar(@PathVariable Long id) {
+        service.inativar(id);
     }
 
 }

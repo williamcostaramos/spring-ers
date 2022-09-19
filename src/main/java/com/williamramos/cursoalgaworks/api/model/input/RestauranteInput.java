@@ -1,5 +1,6 @@
 package com.williamramos.cursoalgaworks.api.model.input;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
@@ -10,6 +11,10 @@ public class RestauranteInput {
     private BigDecimal taxaFrete;
 
     private CozinhaIdInput cozinha;
+
+    @Valid
+    @NotNull
+    private EnderecoInput endereco;
 
     public String getNome() {
         return nome;
@@ -33,5 +38,13 @@ public class RestauranteInput {
 
     public void setCozinha(CozinhaIdInput cozinha) {
         this.cozinha = cozinha;
+    }
+
+    public EnderecoInput getEndereco() {
+        return endereco;
+    }
+
+    public void setEndereco(EnderecoInput endereco) {
+        this.endereco = endereco;
     }
 }

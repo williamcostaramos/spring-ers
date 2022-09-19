@@ -1,4 +1,4 @@
-package com.williamramos.cursoalgaworks.api.model;
+package com.williamramos.cursoalgaworks.api.model.dto;
 
 import java.math.BigDecimal;
 
@@ -6,6 +6,9 @@ public class RestauranteDTO {
     private Long id;
     private String nome;
     private BigDecimal taxaFrete;
+    private Boolean ativo;
+    private EnderecoDTO endereco;
+
 
     private CozinhaDTO cozinha;
 
@@ -40,4 +43,22 @@ public class RestauranteDTO {
     public void setCozinha(CozinhaDTO cozinha) {
         this.cozinha = cozinha;
     }
+
+    public EnderecoDTO getEndereco() {
+        return endereco;
+    }
+
+    public void setEndereco(EnderecoDTO endereco) {
+        this.endereco = endereco;
+    }
+
+    public Boolean getAtivo() {
+        return ativo;
+    }
+
+    public void setAtivo(Boolean ativo) {
+        this.ativo = ativo;
+    }
+
 }
+
