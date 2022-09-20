@@ -130,6 +130,13 @@ public class Restaurante {
         this.ativo = false;
     }
 
+    public void adicionarFormaPagamento(FormaPagamento formaPagamento){
+        this.formaPagamentos.add(formaPagamento);
+    }
+    public void removerFormaPagamento(FormaPagamento formaPagamento){
+        this.formaPagamentos.remove(formaPagamento);
+    }
+
 
     @Override
     public boolean equals(Object o) {
