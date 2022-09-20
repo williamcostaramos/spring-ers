@@ -2,12 +2,12 @@ package com.williamramos.cursoalgaworks.api.controller;
 
 import com.williamramos.cursoalgaworks.api.converter.Converter;
 import com.williamramos.cursoalgaworks.api.model.dto.GrupoDTO;
-import com.williamramos.cursoalgaworks.domain.exception.EntidadeEmUsoException;
-import com.williamramos.cursoalgaworks.domain.exception.GrupoNaoEncontradoException;
-import com.williamramos.cursoalgaworks.domain.exception.NegocioException;
-import com.williamramos.cursoalgaworks.domain.exception.UsuarioNaoEncontradoException;
+import com.williamramos.cursoalgaworks.api.model.dto.PermissaoDTO;
+import com.williamramos.cursoalgaworks.domain.exception.*;
 import com.williamramos.cursoalgaworks.domain.model.Grupo;
+import com.williamramos.cursoalgaworks.domain.model.Permissao;
 import com.williamramos.cursoalgaworks.domain.model.Usuario;
+import com.williamramos.cursoalgaworks.domain.service.GrupoService;
 import com.williamramos.cursoalgaworks.domain.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,43 +20,41 @@ import java.util.List;
 @RequestMapping("/grupos/{idGrupo}/permissoes")
 public class GrupoPermissaoController {
     @Autowired
-    private UsuarioService service;
+    private GrupoService service;
     @Autowired
-    private Converter<Grupo, GrupoDTO> converter;
+    private Converter<Permissao, PermissaoDTO> converter;
 
     @GetMapping()
-    public ResponseEntity<List<GrupoDTO>> listar(@PathVariable Long idUsuario) {
-        Usuario usuario = service.buscar(idUsuario);
-        return ResponseEntity.ok(converter.toDTOList(usuario.getGrupos()));
+    public ResponseEntity<List<PermissaoDTO>> listar(@PathVariable Long idGrupo) {
+        Grupo grupo = service.buscar(idGrupo);
+        return ResponseEntity.ok(converter.toDTOList(grupo.getPermissoes()));
     }
 
 
-    @GetMapping("/{idGrupo}")
-    public GrupoDTO buscar(@PathVariable Long idGrupo) {
-        return converter.toDTO(service.buscar(idGrupo));
+    @GetMapping("/{idPermisao}")
+    public PermissaoDTO buscar(@PathVariable Long idPermissao) {
+        return converter.toDTO(service.buscar(idPermissao));
     }
 
 
-    @PutMapping("/{idGrupo}")
+    @PutMapping("/{idPermisao}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void associarGrupo(@PathVariable Long idUsuario, @PathVariable Long idGrupo) {
+    public void associarGrupo(@PathVariable Long idGrupo, @PathVariable Long idPermisao) {
         try {
-            service.associarGrupo(idUsuario, idGrupo);
-        } catch (NegocioException e) {
+            service.associarPermissao(idGrupo, idPermisao);
+        } catch (GrupoNaoEncontradoException | PermissaoNaoEncontradaException e) {
             throw new NegocioException(e.getMessage());
         }
 
     }
 
-    @DeleteMapping("/{idGrupo}")
+    @DeleteMapping("/{idPermisao}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void desassociarGrupo(@PathVariable Long idUsuario, @PathVariable Long idGrupo) {
+    public void desassociarGrupo(@PathVariable Long idGrupo, @PathVariable Long idPermisao) {
         try {
-            this.service.desassociarGrupo(idUsuario, idGrupo);
-        } catch (UsuarioNaoEncontradoException e) {
-            throw new UsuarioNaoEncontradoException(idUsuario);
-        } catch (EntidadeEmUsoException e) {
-            throw new GrupoNaoEncontradoException(idGrupo);
+            this.service.desassociarPermissao(idGrupo, idPermisao);
+        } catch (GrupoNaoEncontradoException | PermissaoNaoEncontradaException e) {
+            throw new NegocioException(e.getMessage());
         }
 
     }

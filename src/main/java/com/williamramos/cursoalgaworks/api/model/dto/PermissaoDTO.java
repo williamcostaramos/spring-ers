@@ -1,7 +1,5 @@
 package com.williamramos.cursoalgaworks.api.model.dto;
 
-import javax.persistence.Column;
-
 public class PermissaoDTO {
     private Long id;
     private String nome;

@@ -58,4 +58,11 @@ public class Grupo {
     public int hashCode() {
         return getId().hashCode();
     }
+
+    public void adicionarPermissao(Permissao permissao){
+        this.permissoes.add(permissao);
+    }
+    public void removerPermissao(Permissao permissao){
+        this.permissoes.remove(permissao);
+    }
 }
