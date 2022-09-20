@@ -1,0 +1,1 @@
+ALTER TABLE sgc.tb_usuario ADD ativo BOOL DEFAULT true NOT NULL;

@@ -1,13 +1,18 @@
 package com.williamramos.cursoalgaworks.domain.repository;
 
 import com.williamramos.cursoalgaworks.domain.model.Estado;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-import java.util.List;
+@Repository
+public interface EstadoRepository extends JpaRepository<Estado, Long> {
+    /**
+     * Busca um estado usando o paramentro Id
+     * @param id
+     * @return Estado
+     */
 
-public interface EstadoRepository{
-    List<Estado> listAll();
-    Estado findById(Long id);
-    Estado salvar(Estado estado);
-    void remover(Estado estado);
+//    Estado buscar(Long id);
+
 
 }

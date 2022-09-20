@@ -1,16 +1,19 @@
 package com.williamramos.cursoalgaworks.domain.model;
 
+import com.williamramos.cursoalgaworks.core.validation.Groups;
+
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Objects;
 
 @MappedSuperclass
 public abstract class BaseEntity implements  Serializable{
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Override
