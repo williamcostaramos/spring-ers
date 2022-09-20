@@ -54,7 +54,7 @@ public class Restaurante {
             joinColumns = @JoinColumn(name = "restaurante_id"),
             inverseJoinColumns = @JoinColumn(name = "forma_pagamento_id")
     )
-    private List<FormaPagamento> formaPagamentos = new ArrayList<>();
+    private Set<FormaPagamento> formaPagamentos = new HashSet<>();
 
     @Fetch(FetchMode.JOIN)
     @OneToMany(mappedBy = "restaurante")
@@ -84,11 +84,11 @@ public class Restaurante {
         this.cozinha = cozinha;
     }
 
-    public List<FormaPagamento> getFormaPagamentos() {
+    public Set<FormaPagamento> getFormaPagamentos() {
         return formaPagamentos;
     }
 
-    public void setFormaPagamentos(List<FormaPagamento> formaPagamentos) {
+    public void setFormaPagamentos(Set<FormaPagamento> formaPagamentos) {
         this.formaPagamentos = formaPagamentos;
     }
 
@@ -136,6 +136,7 @@ public class Restaurante {
     public void removerFormaPagamento(FormaPagamento formaPagamento){
         this.formaPagamentos.remove(formaPagamento);
     }
+
 
 
     @Override
