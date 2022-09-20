@@ -2,21 +2,17 @@ package com.williamramos.cursoalgaworks.api.controller;
 
 import com.williamramos.cursoalgaworks.api.converter.Converter;
 import com.williamramos.cursoalgaworks.api.model.dto.CozinhaDTO;
-import com.williamramos.cursoalgaworks.api.model.CozinhaWrapper;
 import com.williamramos.cursoalgaworks.api.model.input.CozinhaInput;
 import com.williamramos.cursoalgaworks.domain.exception.*;
 import com.williamramos.cursoalgaworks.domain.model.Cozinha;
 import com.williamramos.cursoalgaworks.domain.service.CozinhaService;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/cozinhas")

@@ -2,7 +2,6 @@ package com.williamramos.cursoalgaworks.api.controller;
 
 import com.williamramos.cursoalgaworks.api.converter.Converter;
 import com.williamramos.cursoalgaworks.api.model.dto.RestauranteDTO;
-import com.williamramos.cursoalgaworks.api.model.RestauranteWrapper;
 import com.williamramos.cursoalgaworks.api.model.input.RestauranteInput;
 import com.williamramos.cursoalgaworks.domain.exception.*;
 import com.williamramos.cursoalgaworks.domain.model.Restaurante;
@@ -35,12 +34,6 @@ public class RestauranteController {
     public ResponseEntity<List<RestauranteDTO>> listar() {
         List<RestauranteDTO> restaurantes = converter.toDTOList(service.listarTodos());
         return ResponseEntity.status(HttpStatus.OK).body(restaurantes);
-    }
-
-    @GetMapping(produces = MediaType.APPLICATION_XML_VALUE)
-    public ResponseEntity<RestauranteWrapper> listarXML() {
-        RestauranteWrapper obj = new RestauranteWrapper(service.listarTodos());
-        return ResponseEntity.status(HttpStatus.OK).body(obj);
     }
 
     @GetMapping("/{id}")
