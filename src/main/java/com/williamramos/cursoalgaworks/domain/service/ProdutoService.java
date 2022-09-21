@@ -26,6 +26,7 @@ public class ProdutoService {
     private RestauranteRepository restauranteRepository;
 
     public List<Produto> listar(Long idRestaurante) {
+        buscarRestaurante(idRestaurante);
         List<Produto> produtos = (List<Produto>) repository.findProdutoByRestaurante(idRestaurante);
         if (produtos.isEmpty()) {
             throw new ProdutoNaoEncontradoException("Produto nao encontrado");
