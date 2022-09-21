@@ -39,6 +39,9 @@ public class Restaurante {
     @Column(name = "ativo")
     private Boolean ativo = Boolean.TRUE;
 
+    @Column(name = "aberto")
+    private Boolean aberto = Boolean.FALSE;
+
     @Embedded
     private Endereco endereco;
 
@@ -130,6 +133,13 @@ public class Restaurante {
         this.ativo = false;
     }
 
+    public void abrir(){
+        this.aberto =true;
+    }
+    public void fechar(){
+        this.aberto=false;
+    }
+
 
     @Override
     public boolean equals(Object o) {
@@ -142,5 +152,13 @@ public class Restaurante {
     @Override
     public int hashCode() {
         return Objects.hash(getId());
+    }
+
+    public Boolean getAberto() {
+        return aberto;
+    }
+
+    public void setAberto(Boolean aberto) {
+        this.aberto = aberto;
     }
 }

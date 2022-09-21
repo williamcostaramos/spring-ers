@@ -78,14 +78,25 @@ public class RestauranteService {
 
     @Transactional
     public void ativar(Long id){
-        Restaurante restauranteAtual = repository.getById(id);
+        Restaurante restauranteAtual = buscar(id);
         restauranteAtual.ativar();
     }
 
     @Transactional
     public void inativar(Long id){
-        Restaurante restauranteAtual = repository.getById(id);
+        Restaurante restauranteAtual = buscar(id);
         restauranteAtual.inativar();
+    }
+
+    @Transactional
+    public void abrir(Long id){
+        Restaurante restauranteAtual = buscar(id);
+        restauranteAtual.abrir();
+    }
+    @Transactional
+    public void fechar(Long id){
+        Restaurante restauranteAtual = buscar(id);
+        restauranteAtual.fechar();
     }
 
 }

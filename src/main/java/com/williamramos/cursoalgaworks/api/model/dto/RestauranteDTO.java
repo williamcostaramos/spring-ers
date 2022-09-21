@@ -7,6 +7,7 @@ public class RestauranteDTO {
     private String nome;
     private BigDecimal taxaFrete;
     private Boolean ativo;
+    private Boolean aberto;
     private EnderecoDTO endereco;
 
 
@@ -60,5 +61,12 @@ public class RestauranteDTO {
         this.ativo = ativo;
     }
 
+    public Boolean getAberto() {
+        return aberto;
+    }
+
+    public void setAberto(Boolean aberto) {
+        this.aberto = aberto;
+    }
 }
 
