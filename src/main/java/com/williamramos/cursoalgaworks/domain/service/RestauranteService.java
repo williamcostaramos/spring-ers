@@ -1,10 +1,7 @@
 package com.williamramos.cursoalgaworks.domain.service;
 
 import com.williamramos.cursoalgaworks.domain.exception.*;
-import com.williamramos.cursoalgaworks.domain.model.Cidade;
-import com.williamramos.cursoalgaworks.domain.model.Cozinha;
-import com.williamramos.cursoalgaworks.domain.model.FormaPagamento;
-import com.williamramos.cursoalgaworks.domain.model.Restaurante;
+import com.williamramos.cursoalgaworks.domain.model.*;
 import com.williamramos.cursoalgaworks.domain.repository.CidadeRepository;
 import com.williamramos.cursoalgaworks.domain.repository.CozinhaRepository;
 import com.williamramos.cursoalgaworks.domain.repository.RestauranteRepository;
@@ -22,7 +19,6 @@ import java.util.List;
 public class RestauranteService {
 
 
-
     @Autowired
     private RestauranteRepository repository;
     @Autowired
@@ -33,6 +29,9 @@ public class RestauranteService {
 
     @Autowired
     private FormaPagamentoService formaPagamentoService;
+
+    @Autowired
+    private UsuarioService usuarioService;
 
     public List<Restaurante> listarTodos() {
         List<Restaurante> restaurantes = repository.findAll();
@@ -58,7 +57,7 @@ public class RestauranteService {
     @Transactional
     public Restaurante salvar(Restaurante restaurante) {
         Long cozinhaId = restaurante.getCozinha().getId();
-        Cozinha cozinha = cozinhaRepository.findById(cozinhaId).orElseThrow(() -> new  CozinhaNaoEncontradaException(cozinhaId));
+        Cozinha cozinha = cozinhaRepository.findById(cozinhaId).orElseThrow(() -> new CozinhaNaoEncontradaException(cozinhaId));
         Long cidadeId = restaurante.getEndereco().getCidade().getId();
         Cidade cidade = cidadeRepository.findById(cidadeId).orElseThrow(() -> new CidadeNaoEncontradaException(cidadeId));
         restaurante.setCozinha(cozinha);
@@ -79,38 +78,58 @@ public class RestauranteService {
     }
 
     @Transactional
-    public void ativar(Long id){
+    public void ativar(Long id) {
         Restaurante restauranteAtual = buscar(id);
         restauranteAtual.ativar();
     }
 
     @Transactional
-    public void inativar(Long id){
+    public void inativar(Long id) {
         Restaurante restauranteAtual = buscar(id);
         restauranteAtual.inativar();
     }
+
     @Transactional
-    public void associarFormaPagamento(Long idRestaurante, Long idPagamento){
+    public void associarFormaPagamento(Long idRestaurante, Long idPagamento) {
         Restaurante restaurante = buscar(idRestaurante);
-        FormaPagamento formaPagamento= this.formaPagamentoService.buscar(idPagamento);
+        FormaPagamento formaPagamento = this.formaPagamentoService.buscar(idPagamento);
         restaurante.adicionarFormaPagamento(formaPagamento);
     }
+
     @Transactional
-    public void desassociarFormaPagamento(Long idRestaurante, Long idPagamento){
+    public void desassociarFormaPagamento(Long idRestaurante, Long idPagamento) {
         Restaurante restaurante = buscar(idRestaurante);
-        FormaPagamento formaPagamento= this.formaPagamentoService.buscar(idPagamento);
+        FormaPagamento formaPagamento = this.formaPagamentoService.buscar(idPagamento);
         restaurante.removerFormaPagamento(formaPagamento);
     }
 
     @Transactional
-    public void abrir(Long id){
+    public void associarResponsavel(Long idRestaurante, Long idUsuario) {
+        Restaurante restaurante = buscar(idRestaurante);
+        Usuario usuario = this.usuarioService.buscar(idUsuario);
+        restaurante.adicionarResponsavel(usuario);
+    }
+
+    @Transactional
+    public void desassociarResponsavel(Long idRestaurante, Long idUsuario) {
+        Restaurante restaurante = buscar(idRestaurante);
+        Usuario usuario = this.usuarioService.buscar(idUsuario);
+        restaurante.removerResponsavel(usuario);
+    }
+
+
+    @Transactional
+    public void abrir(Long id) {
         Restaurante restauranteAtual = buscar(id);
         restauranteAtual.abrir();
     }
+
     @Transactional
-    public void fechar(Long id){
+    public void fechar(Long id) {
         Restaurante restauranteAtual = buscar(id);
         restauranteAtual.fechar();
     }
+
+
 
 }

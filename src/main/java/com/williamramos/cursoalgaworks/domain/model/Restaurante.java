@@ -1,21 +1,11 @@
 package com.williamramos.cursoalgaworks.domain.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.williamramos.cursoalgaworks.core.annotation.Multiplo;
-import com.williamramos.cursoalgaworks.core.annotation.TaxaFrete;
 import com.williamramos.cursoalgaworks.core.annotation.ValorZeroIncluirDescricao;
-import com.williamramos.cursoalgaworks.core.validation.Groups;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.PositiveOrZero;
-import javax.validation.groups.ConvertGroup;
-import javax.validation.groups.Default;
 import java.math.BigDecimal;
 import java.util.*;
 
@@ -58,6 +48,13 @@ public class Restaurante {
             inverseJoinColumns = @JoinColumn(name = "forma_pagamento_id")
     )
     private Set<FormaPagamento> formaPagamentos = new HashSet<>();
+
+    @ManyToMany
+    @JoinTable(name = "tb_restaurante_responsavel",
+            joinColumns = @JoinColumn(name = "restaurante_id"),
+            inverseJoinColumns = @JoinColumn(name = "usuario_id")
+    )
+    private Set<Usuario> responsaveis = new HashSet<>();
 
     @Fetch(FetchMode.JOIN)
     @OneToMany(mappedBy = "restaurante")
@@ -111,6 +108,14 @@ public class Restaurante {
         this.produtos = produtos;
     }
 
+    public Set<Usuario> getResponsaveis() {
+        return responsaveis;
+    }
+
+    public void setResponsaveis(Set<Usuario> usuarios) {
+        this.responsaveis = usuarios;
+    }
+
     public Long getId() {
         return id;
     }
@@ -138,6 +143,12 @@ public class Restaurante {
     }
     public void removerFormaPagamento(FormaPagamento formaPagamento){
         this.formaPagamentos.remove(formaPagamento);
+    }
+    public void adicionarResponsavel(Usuario responsavel){
+        this.responsaveis.add(responsavel);
+    }
+    public void removerResponsavel(Usuario responsavel){
+        this.responsaveis.remove(responsavel);
     }
 
     public void abrir(){

@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 
 public interface RestauranteRepository extends JpaRepository<Restaurante, Long>, RestauranteRepositoryQueries, JpaSpecificationExecutor<Restaurante> {
     @Query("select distinct rest from Restaurante rest join fetch rest.cozinha left join fetch rest.formaPagamentos left join fetch rest.produtos")
@@ -24,5 +25,6 @@ public interface RestauranteRepository extends JpaRepository<Restaurante, Long>,
      */
 
     List<Restaurante> find(String nome, BigDecimal taxaFreteInicial, BigDecimal taxaFreteFinal);
+
 
 }
