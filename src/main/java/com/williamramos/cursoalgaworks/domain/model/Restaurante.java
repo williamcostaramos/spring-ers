@@ -39,6 +39,9 @@ public class Restaurante {
     @Column(name = "ativo")
     private Boolean ativo = Boolean.TRUE;
 
+    @Column(name = "aberto")
+    private Boolean aberto = Boolean.FALSE;
+
     @Embedded
     private Endereco endereco;
 
@@ -54,7 +57,7 @@ public class Restaurante {
             joinColumns = @JoinColumn(name = "restaurante_id"),
             inverseJoinColumns = @JoinColumn(name = "forma_pagamento_id")
     )
-    private List<FormaPagamento> formaPagamentos = new ArrayList<>();
+    private Set<FormaPagamento> formaPagamentos = new HashSet<>();
 
     @Fetch(FetchMode.JOIN)
     @OneToMany(mappedBy = "restaurante")
@@ -84,11 +87,11 @@ public class Restaurante {
         this.cozinha = cozinha;
     }
 
-    public List<FormaPagamento> getFormaPagamentos() {
+    public Set<FormaPagamento> getFormaPagamentos() {
         return formaPagamentos;
     }
 
-    public void setFormaPagamentos(List<FormaPagamento> formaPagamentos) {
+    public void setFormaPagamentos(Set<FormaPagamento> formaPagamentos) {
         this.formaPagamentos = formaPagamentos;
     }
 
@@ -130,6 +133,19 @@ public class Restaurante {
         this.ativo = false;
     }
 
+    public void adicionarFormaPagamento(FormaPagamento formaPagamento){
+        this.formaPagamentos.add(formaPagamento);
+    }
+    public void removerFormaPagamento(FormaPagamento formaPagamento){
+        this.formaPagamentos.remove(formaPagamento);
+    }
+
+    public void abrir(){
+        this.aberto =true;
+    }
+    public void fechar(){
+        this.aberto=false;
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -142,5 +158,13 @@ public class Restaurante {
     @Override
     public int hashCode() {
         return Objects.hash(getId());
+    }
+
+    public Boolean getAberto() {
+        return aberto;
+    }
+
+    public void setAberto(Boolean aberto) {
+        this.aberto = aberto;
     }
 }
