@@ -18,6 +18,9 @@ public class Endereco {
     @Column(name = "endereco_bairro")
     private String bairro;
 
+    @Column(name = "endereco_numero")
+    private String numero;
+
     @ManyToOne
     @JoinColumn(name = "cidade_id")
     private Cidade cidade;
@@ -40,6 +43,14 @@ public class Endereco {
 
     public void setLogradouro(String logradouro) {
         this.logradouro = logradouro;
+    }
+
+    public String getNumero() {
+        return numero;
+    }
+
+    public void setNumero(String numero) {
+        this.numero = numero;
     }
 
     public String getComplemento() {

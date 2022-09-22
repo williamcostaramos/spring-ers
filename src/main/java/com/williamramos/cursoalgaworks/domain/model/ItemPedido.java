@@ -19,6 +19,10 @@ public class ItemPedido extends BaseEntity{
     @JoinColumn(name = "pedido_id")
     private Pedido pedido;
 
+    @ManyToOne
+    @JoinColumn(name = "produto_id")
+    private Produto produto;
+
     public Integer getQuantidade() {
         return quantidade;
     }
@@ -58,4 +62,24 @@ public class ItemPedido extends BaseEntity{
     public void setPedido(Pedido pedido) {
         this.pedido = pedido;
     }
+
+    public Produto getProduto() {
+        return produto;
+    }
+
+    public void setProduto(Produto produto) {
+        this.produto = produto;
+    }
+
+    public void calcularPrecoTotal(){
+
+        if(this.precoUnitario == null){
+            this.precoUnitario =BigDecimal.ZERO;
+        }
+        if(this.quantidade ==null){
+            this.quantidade =0;
+        }
+        this.setPrecoTotal(this.precoUnitario.multiply(new BigDecimal(this.quantidade)));
+    }
+
 }

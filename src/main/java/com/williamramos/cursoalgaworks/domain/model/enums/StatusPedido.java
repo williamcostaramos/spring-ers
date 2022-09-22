@@ -13,4 +13,7 @@ public enum StatusPedido {
         this.descricao = descricao;
     }
 
+    public String getDescricao() {
+        return descricao;
+    }
 }

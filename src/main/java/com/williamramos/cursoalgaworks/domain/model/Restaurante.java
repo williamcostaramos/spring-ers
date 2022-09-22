@@ -144,6 +144,10 @@ public class Restaurante {
     public void removerFormaPagamento(FormaPagamento formaPagamento){
         this.formaPagamentos.remove(formaPagamento);
     }
+
+    public Boolean aceitaFormaPagamento(FormaPagamento formaPagamento){
+        return this.formaPagamentos.contains(formaPagamento);
+    }
     public void adicionarResponsavel(Usuario responsavel){
         this.responsaveis.add(responsavel);
     }

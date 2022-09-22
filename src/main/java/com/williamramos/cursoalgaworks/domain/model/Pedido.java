@@ -13,6 +13,9 @@ import java.util.List;
 public class Pedido extends BaseEntity {
     @Column(name = "subtotal")
     private BigDecimal subtotal;
+
+    @Column(name = "valor_total")
+    private BigDecimal valorTotal;
     @Column(name = "taxa_frete")
     private BigDecimal taxaFrete;
     @Column(name = "data_criacao")
@@ -23,7 +26,11 @@ public class Pedido extends BaseEntity {
     private LocalDateTime dataCancelamento;
     @Column(name = "data_entrega")
     private LocalDateTime dataEntrega;
+
+    @Embedded
+    private Endereco endereco;
     @Column(name = "status")
+    @Enumerated(EnumType.ORDINAL)
     private StatusPedido statusPedido;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "forma_pagamento_id")
@@ -35,7 +42,7 @@ public class Pedido extends BaseEntity {
     @JoinColumn(name = "usuario_cliente_id")
     private Usuario cliente;
 
-    @OneToMany(mappedBy = "pedido")
+    @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL)
     private List<ItemPedido> itensPedido = new ArrayList<>();
 
     public BigDecimal getSubtotal() {
@@ -108,5 +115,49 @@ public class Pedido extends BaseEntity {
 
     public void setCliente(Usuario cliente) {
         this.cliente = cliente;
+    }
+
+    public BigDecimal getValorTotal() {
+        return valorTotal;
+    }
+
+    public void setValorTotal(BigDecimal valorTotal) {
+        this.valorTotal = valorTotal;
+    }
+
+    public StatusPedido getStatusPedido() {
+        return statusPedido;
+    }
+
+    public void setStatusPedido(StatusPedido statusPedido) {
+        this.statusPedido = statusPedido;
+    }
+
+    public List<ItemPedido> getItensPedido() {
+        return itensPedido;
+    }
+
+    public void setItensPedido(List<ItemPedido> itensPedido) {
+        this.itensPedido = itensPedido;
+    }
+
+    public Endereco getEndereco() {
+        return endereco;
+    }
+
+    public void setEndereco(Endereco endereco) {
+        this.endereco = endereco;
+    }
+
+    public void calcularValorTotal() {
+        this.itensPedido.forEach(ItemPedido::calcularPrecoTotal);
+        this.subtotal = itensPedido.stream().map(itemPedido -> itemPedido.getPrecoTotal()).reduce(BigDecimal.ZERO, BigDecimal::add);
+        this.valorTotal = this.subtotal.add(this.taxaFrete);
+    }
+    public void definirValorFrete(){
+        setTaxaFrete(this.restaurante.getTaxaFrete());
+    }
+    public void atribuirPedidoAosItens(){
+        this.itensPedido.forEach(itemPedido -> itemPedido.setPedido(this));
     }
 }

@@ -6,6 +6,9 @@ public class EnderecoDTO {
 
     private String logradouro;
 
+    private String numero;
+
+
     private String complemento;
 
 
@@ -27,6 +30,14 @@ public class EnderecoDTO {
 
     public void setLogradouro(String logradouro) {
         this.logradouro = logradouro;
+    }
+
+    public String getNumero() {
+        return numero;
+    }
+
+    public void setNumero(String numero) {
+        this.numero = numero;
     }
 
     public String getComplemento() {
