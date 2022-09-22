@@ -7,10 +7,13 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Table(name = "tb_pedido")
 public class Pedido extends BaseEntity {
+    @Column(name = "codigo")
+    private String codigo;
     @Column(name = "subtotal")
     private BigDecimal subtotal;
 
@@ -31,7 +34,7 @@ public class Pedido extends BaseEntity {
     private Endereco endereco;
     @Column(name = "status")
     @Enumerated(EnumType.ORDINAL)
-    private StatusPedido statusPedido;
+    private StatusPedido statusPedido = StatusPedido.CRIADO;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "forma_pagamento_id")
     private FormaPagamento formaPagamento;
@@ -44,6 +47,14 @@ public class Pedido extends BaseEntity {
 
     @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL)
     private List<ItemPedido> itensPedido = new ArrayList<>();
+
+    public String getCodigo() {
+        return codigo;
+    }
+
+    public void setCodigo(String codigo) {
+        this.codigo = codigo;
+    }
 
     public BigDecimal getSubtotal() {
         return subtotal;
@@ -159,5 +170,9 @@ public class Pedido extends BaseEntity {
     }
     public void atribuirPedidoAosItens(){
         this.itensPedido.forEach(itemPedido -> itemPedido.setPedido(this));
+    }
+    @PrePersist
+    private void gerarCodigo(){
+        setCodigo(UUID.randomUUID().toString());
     }
 }

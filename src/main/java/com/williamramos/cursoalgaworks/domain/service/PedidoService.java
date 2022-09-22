@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.Collection;
 import java.util.List;
 
 @Service
@@ -43,11 +42,11 @@ public class PedidoService {
     /**
      * Buscar um unico pedido pelo identificador
      *
-     * @param idPedido
+     * @param codigo
      * @return Pedido
      */
-    public Pedido buscar(Long idPedido) {
-        return repository.findById(idPedido).orElseThrow(() -> new PedidoNaoEncontradoException(idPedido));
+    public Pedido buscar(String codigo) {
+        return repository.findByCodigo(codigo).orElseThrow(() -> new PedidoNaoEncontradoException(codigo));
     }
 
     public List<Pedido> buscarPedidosRestaurante(Long idRestaurante) {
@@ -69,30 +68,31 @@ public class PedidoService {
     }
 
     @Transactional
-    public void remover(Long idPedido, Long idRestaurante) {
+    public void remover(String codigo, Long idRestaurante) {
         try {
-            Pedido pedido = buscar(idPedido);
+            Pedido pedido = buscar(codigo);
             if (pedido.getRestaurante().getId().equals(idRestaurante)) {
                 repository.delete(pedido);
             }
         } catch (EmptyResultDataAccessException e) {
-            throw new ProdutoNaoEncontradoException(idPedido);
+            throw new ProdutoNaoEncontradoException(codigo);
         }
 
     }
 
     @Transactional
-    public void remover(Long idPedido) {
+    public void remover(String codigo) {
         try {
-            repository.deleteById(idPedido);
+            Pedido pedido = buscar(codigo);
+            repository.delete(pedido);
         } catch (EmptyResultDataAccessException e) {
-            throw new ProdutoNaoEncontradoException(idPedido);
+            throw new ProdutoNaoEncontradoException(codigo);
         }
     }
 
     @Transactional
-    public void confirmacaoPedido(Long id) {
-        Pedido pedido = buscar(id);
+    public void confirmacaoPedido(String codigo) {
+        Pedido pedido = buscar(codigo);
         if (!pedido.getStatusPedido().equals(StatusPedido.CRIADO)) {
             throw new NegocioException(String.format("O status do pedido %d não pode ser alterado para o status %s pois está como %s", pedido.getId(), StatusPedido.CONFIRMADO.getDescricao(), pedido.getStatusPedido().getDescricao()));
         }
@@ -100,8 +100,8 @@ public class PedidoService {
         pedido.setDataConfirmacao(LocalDateTime.now());
     }
     @Transactional
-    public void cancelamentoPedido(Long id) {
-        Pedido pedido = buscar(id);
+    public void cancelamentoPedido(String codigo) {
+        Pedido pedido = buscar(codigo);
         if (pedido.getStatusPedido().equals(StatusPedido.ENTREGUE)) {
             throw new NegocioException(String.format("O status do pedido %d não pode ser alterado para o status %s pois está como %s", pedido.getId(), StatusPedido.CANCELADO.getDescricao(), pedido.getStatusPedido().getDescricao()));
         }
@@ -110,8 +110,8 @@ public class PedidoService {
     }
 
     @Transactional
-    public void entregarPedido(Long id) {
-        Pedido pedido = buscar(id);
+    public void entregarPedido(String codigo) {
+        Pedido pedido = buscar(codigo);
         if (pedido.getStatusPedido().equals(StatusPedido.CANCELADO)) {
             throw new NegocioException(String.format("O status do pedido %d não pode ser alterado para o status %s pois está como %s", pedido.getId(), StatusPedido.ENTREGUE.getDescricao(), pedido.getStatusPedido().getDescricao()));
         }

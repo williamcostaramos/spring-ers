@@ -10,11 +10,9 @@ import com.williamramos.cursoalgaworks.domain.service.PedidoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.SmartValidator;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
@@ -37,10 +35,9 @@ public class PedidoController {
         return ResponseEntity.status(HttpStatus.OK).body(Pedidos);
     }
 
-    @GetMapping("/{id}")
-    public PedidoDTO buscar(@PathVariable Long id) throws IllegalAccessException {
-
-        return converter.toDTO(service.buscar(id));
+    @GetMapping("/{codigo}")
+    public PedidoDTO buscar(@PathVariable String codigo) {
+        return converter.toDTO(service.buscar(codigo));
     }
 
 
@@ -56,10 +53,10 @@ public class PedidoController {
         }
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<?> salvar(@PathVariable Long id, @RequestBody @Valid PedidoInput Pedido) {
+    @PutMapping("/{codigo}")
+    public ResponseEntity<?> salvar(@PathVariable String codigo, @RequestBody @Valid PedidoInput Pedido) {
         try {
-            Pedido PedidoAtual = service.buscar(id);
+            Pedido PedidoAtual = service.buscar(codigo);
             converter.copyToDomainObject(Pedido, PedidoAtual);
             PedidoAtual = service.salvar(PedidoAtual);
             return ResponseEntity.ok(converter.toDTO(PedidoAtual));
@@ -70,15 +67,15 @@ public class PedidoController {
 
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> remover(@PathVariable Long id) {
+    @DeleteMapping("/{codigo}")
+    public ResponseEntity<?> remover(@PathVariable String codigo) {
         try {
-            service.remover(id);
+            service.remover(codigo);
             return ResponseEntity.noContent().build();
         } catch (EntidadeNaoEncontradaException e) {
-            throw new PedidoNaoEncontradoException(id);
+            throw new PedidoNaoEncontradoException(codigo);
         } catch (EntidadeEmUsoException e) {
-            throw new PedidoEmUsoException(id);
+            throw new PedidoEmUsoException(codigo);
         }
     }
 

@@ -25,7 +25,6 @@ public class PedidoInput {
     private LocalDateTime dataCancelamento;
 
     private LocalDateTime dataEntrega;
-    private StatusPedido statusPedido;
     @NotNull
     @Valid
     private FormaPagamentoIdInput formaPagamento;
@@ -101,14 +100,7 @@ public class PedidoInput {
     public void setDataEntrega(LocalDateTime dataEntrega) {
         this.dataEntrega = dataEntrega;
     }
-
-    public StatusPedido getStatusPedido() {
-        return statusPedido;
-    }
-
-    public void setStatusPedido(StatusPedido statusPedido) {
-        this.statusPedido = statusPedido;
-    }
+    
 
     public FormaPagamentoIdInput getFormaPagamento() {
         return formaPagamento;

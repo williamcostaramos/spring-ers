@@ -7,8 +7,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public class PedidoResumoDTO {
-    private Long id;
+    private String codigo;
     private BigDecimal subtotal;
+    private BigDecimal valorTotal;
     private BigDecimal taxaFrete;
     private LocalDateTime dataCriacao;
     private StatusPedido statusPedido;
@@ -21,6 +22,14 @@ public class PedidoResumoDTO {
 
     public void setSubtotal(BigDecimal subtotal) {
         this.subtotal = subtotal;
+    }
+
+    public BigDecimal getValorTotal() {
+        return valorTotal;
+    }
+
+    public void setValorTotal(BigDecimal valorTotal) {
+        this.valorTotal = valorTotal;
     }
 
     public BigDecimal getTaxaFrete() {
@@ -63,11 +72,11 @@ public class PedidoResumoDTO {
         this.cliente = cliente;
     }
 
-    public Long getId() {
-        return id;
+    public String getCodigo() {
+        return codigo;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setCodigo(String codigo) {
+        this.codigo = codigo;
     }
 }
