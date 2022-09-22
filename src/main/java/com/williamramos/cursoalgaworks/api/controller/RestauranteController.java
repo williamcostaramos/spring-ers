@@ -113,4 +113,15 @@ public class RestauranteController {
         service.fechar(id);
     }
 
+    @PutMapping("/ativacoes")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void ativarTodos(@RequestBody List<Long> ids){
+        service.ativar(ids);
+    }
+    @DeleteMapping("/ativacoes")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void desativarTodos(@RequestBody List<Long> ids){
+        service.desativar(ids);
+    }
+
 }

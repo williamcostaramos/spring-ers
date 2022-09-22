@@ -82,12 +82,23 @@ public class RestauranteService {
         Restaurante restauranteAtual = buscar(id);
         restauranteAtual.ativar();
     }
-
     @Transactional
     public void inativar(Long id) {
         Restaurante restauranteAtual = buscar(id);
         restauranteAtual.inativar();
     }
+
+    @Transactional
+    public void ativar(List<Long> ids) {
+       ids.forEach(this::ativar);
+    }
+    @Transactional
+    public void desativar(List<Long> ids) {
+        ids.forEach(this::inativar);
+    }
+
+
+
 
     @Transactional
     public void associarFormaPagamento(Long idRestaurante, Long idPagamento) {
