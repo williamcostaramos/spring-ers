@@ -30,11 +30,6 @@ public class RestauranteFormaPagamentoController {
     }
 
 
-    @GetMapping("/{idFormaPagamento}")
-    public FormaPagamentoDTO buscar(@PathVariable Long idFormaPagamento) {
-        return converter.toDTO(service.buscar(idFormaPagamento));
-    }
-
 
     @PutMapping("/{idFormaPagamento}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
