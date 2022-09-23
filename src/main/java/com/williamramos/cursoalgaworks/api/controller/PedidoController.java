@@ -68,10 +68,10 @@ public class PedidoController {
     }
 
     @DeleteMapping("/{codigo}")
-    public ResponseEntity<?> remover(@PathVariable String codigo) {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void remover(@PathVariable String codigo) {
         try {
             service.remover(codigo);
-            return ResponseEntity.noContent().build();
         } catch (EntidadeNaoEncontradaException e) {
             throw new PedidoNaoEncontradoException(codigo);
         } catch (EntidadeEmUsoException e) {
