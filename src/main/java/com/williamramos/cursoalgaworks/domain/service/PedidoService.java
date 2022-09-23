@@ -94,7 +94,9 @@ public class PedidoService {
     public void confirmacaoPedido(String codigo) {
         Pedido pedido = buscar(codigo);
         if (!pedido.getStatusPedido().equals(StatusPedido.CRIADO)) {
-            throw new NegocioException(String.format("O status do pedido %d não pode ser alterado para o status %s pois está como %s", pedido.getId(), StatusPedido.CONFIRMADO.getDescricao(), pedido.getStatusPedido().getDescricao()));
+            throw new NegocioException(
+                    String.format("O status do pedido %s não pode ser alterado para o status %s pois o mesmo foi %s",
+                            pedido.getCodigo(), StatusPedido.CONFIRMADO.getDescricao(), pedido.getStatusPedido().getDescricao()));
         }
         pedido.setStatusPedido(StatusPedido.CONFIRMADO);
         pedido.setDataConfirmacao(LocalDateTime.now());
@@ -103,7 +105,7 @@ public class PedidoService {
     public void cancelamentoPedido(String codigo) {
         Pedido pedido = buscar(codigo);
         if (pedido.getStatusPedido().equals(StatusPedido.ENTREGUE)) {
-            throw new NegocioException(String.format("O status do pedido %d não pode ser alterado para o status %s pois está como %s", pedido.getId(), StatusPedido.CANCELADO.getDescricao(), pedido.getStatusPedido().getDescricao()));
+            throw new NegocioException(String.format("O status do pedido %s não pode ser alterado para o status %s pois o mesmo foi %s", pedido.getCodigo(), StatusPedido.CANCELADO.getDescricao(), pedido.getStatusPedido().getDescricao()));
         }
         pedido.setStatusPedido(StatusPedido.CANCELADO);
         pedido.setDataConfirmacao(LocalDateTime.now());
@@ -113,10 +115,10 @@ public class PedidoService {
     public void entregarPedido(String codigo) {
         Pedido pedido = buscar(codigo);
         if (pedido.getStatusPedido().equals(StatusPedido.CANCELADO)) {
-            throw new NegocioException(String.format("O status do pedido %d não pode ser alterado para o status %s pois está como %s", pedido.getId(), StatusPedido.ENTREGUE.getDescricao(), pedido.getStatusPedido().getDescricao()));
+            throw new NegocioException(String.format("O status do pedido %s não pode ser alterado para o status %s pois o mesmo foi %s", pedido.getCodigo(), StatusPedido.ENTREGUE.getDescricao(), pedido.getStatusPedido().getDescricao()));
         }
         pedido.setStatusPedido(StatusPedido.ENTREGUE);
-        pedido.setDataCancelamento(LocalDateTime.now());
+        pedido.setDataEntrega(LocalDateTime.now());
     }
     private void validarPedido(Pedido pedido) {
         Long idRestaurante = pedido.getRestaurante().getId();

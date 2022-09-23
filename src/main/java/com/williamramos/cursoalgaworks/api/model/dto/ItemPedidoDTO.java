@@ -6,7 +6,7 @@ public class ItemPedidoDTO {
     private Long produtoId;
     private String produtoNome;
     private Integer quantidade;
-    private BigDecimal preoUnitario;
+    private BigDecimal precoUnitario;
     private BigDecimal precoTotal;
 
     public Long getProdutoId() {
@@ -33,12 +33,12 @@ public class ItemPedidoDTO {
         this.quantidade = quantidade;
     }
 
-    public BigDecimal getPreoUnitario() {
-        return preoUnitario;
+    public BigDecimal getPrecoUnitario() {
+        return precoUnitario;
     }
 
-    public void setPreoUnitario(BigDecimal preoUnitario) {
-        this.preoUnitario = preoUnitario;
+    public void setPrecoUnitario(BigDecimal precoUnitario) {
+        this.precoUnitario = precoUnitario;
     }
 
     public BigDecimal getPrecoTotal() {

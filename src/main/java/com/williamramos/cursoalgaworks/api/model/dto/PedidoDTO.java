@@ -12,10 +12,7 @@ import java.util.List;
 public class PedidoDTO extends PedidoResumoDTO{
 
 
-    private LocalDateTime dataConfirmacao;
 
-    private LocalDateTime dataCancelamento;
-    private LocalDateTime dataEntrega;
 
     private FormaPagamentoDTO formaPagamento;
 
@@ -28,31 +25,6 @@ public class PedidoDTO extends PedidoResumoDTO{
 
 
     private List<ItemPedidoDTO> itens;
-
-
-    public LocalDateTime getDataConfirmacao() {
-        return dataConfirmacao;
-    }
-
-    public void setDataConfirmacao(LocalDateTime dataConfirmacao) {
-        this.dataConfirmacao = dataConfirmacao;
-    }
-
-    public LocalDateTime getDataCancelamento() {
-        return dataCancelamento;
-    }
-
-    public void setDataCancelamento(LocalDateTime dataCancelamento) {
-        this.dataCancelamento = dataCancelamento;
-    }
-
-    public LocalDateTime getDataEntrega() {
-        return dataEntrega;
-    }
-
-    public void setDataEntrega(LocalDateTime dataEntrega) {
-        this.dataEntrega = dataEntrega;
-    }
 
 
     public FormaPagamentoDTO getFormaPagamento() {

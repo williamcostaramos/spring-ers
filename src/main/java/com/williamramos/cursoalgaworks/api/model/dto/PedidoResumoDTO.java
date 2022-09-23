@@ -12,6 +12,9 @@ public class PedidoResumoDTO {
     private BigDecimal valorTotal;
     private BigDecimal taxaFrete;
     private LocalDateTime dataCriacao;
+    private LocalDateTime dataConfirmacao;
+    private LocalDateTime dataCancelamento;
+    private LocalDateTime dataEntrega;
     private StatusPedido statusPedido;
     private RestauranteResumoDTO restaurante;
     private UsuarioResumoDTO cliente;
@@ -46,6 +49,30 @@ public class PedidoResumoDTO {
 
     public void setDataCriacao(LocalDateTime dataCriacao) {
         this.dataCriacao = dataCriacao;
+    }
+
+    public LocalDateTime getDataConfirmacao() {
+        return dataConfirmacao;
+    }
+
+    public void setDataConfirmacao(LocalDateTime dataConfirmacao) {
+        this.dataConfirmacao = dataConfirmacao;
+    }
+
+    public LocalDateTime getDataCancelamento() {
+        return dataCancelamento;
+    }
+
+    public void setDataCancelamento(LocalDateTime dataCancelamento) {
+        this.dataCancelamento = dataCancelamento;
+    }
+
+    public LocalDateTime getDataEntrega() {
+        return dataEntrega;
+    }
+
+    public void setDataEntrega(LocalDateTime dataEntrega) {
+        this.dataEntrega = dataEntrega;
     }
 
     public StatusPedido getStatusPedido() {

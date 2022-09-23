@@ -100,7 +100,7 @@ public class PedidoInput {
     public void setDataEntrega(LocalDateTime dataEntrega) {
         this.dataEntrega = dataEntrega;
     }
-    
+
 
     public FormaPagamentoIdInput getFormaPagamento() {
         return formaPagamento;
