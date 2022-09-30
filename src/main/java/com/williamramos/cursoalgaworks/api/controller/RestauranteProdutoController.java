@@ -25,8 +25,14 @@ public class RestauranteProdutoController {
     private Converter<Produto, ProdutoDTO> converter;
 
     @GetMapping()
-    public ResponseEntity<List<ProdutoDTO>> listar(@PathVariable Long idRestaurante) {
-        List<Produto> produtos = service.listar(idRestaurante);
+    public ResponseEntity<List<ProdutoDTO>> listar(@PathVariable Long idRestaurante, @RequestParam(required = false) boolean inativos) {
+        List<Produto> produtos =null;
+        if(inativos){
+         produtos= service.listar(idRestaurante);
+        }else {
+            produtos = service.listarTodosAtivos(idRestaurante);
+        }
+
         return ResponseEntity.ok(converter.toDTOList(produtos));
     }
 

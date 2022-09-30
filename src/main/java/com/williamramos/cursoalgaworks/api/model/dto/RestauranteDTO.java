@@ -1,12 +1,21 @@
 package com.williamramos.cursoalgaworks.api.model.dto;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.williamramos.cursoalgaworks.api.model.view.RestauranteView;
+
 import java.math.BigDecimal;
 
 public class RestauranteDTO {
+    @JsonView(value={RestauranteView.Resumo.class, RestauranteView.ApenasNomeId.class})
     private Long id;
+    @JsonView(value={RestauranteView.Resumo.class, RestauranteView.ApenasNomeId.class})
     private String nome;
+    @JsonView(value={RestauranteView.Resumo.class})
     private BigDecimal taxaFrete;
+    @JsonView(value={RestauranteView.Resumo.class})
     private Boolean ativo;
+    @JsonView(value={RestauranteView.Resumo.class})
     private Boolean aberto;
     private EnderecoDTO endereco;
 
