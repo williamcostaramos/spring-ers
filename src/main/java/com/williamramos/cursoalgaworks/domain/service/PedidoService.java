@@ -1,11 +1,14 @@
 package com.williamramos.cursoalgaworks.domain.service;
 
+import com.williamramos.cursoalgaworks.api.model.filter.PedidoFilter;
 import com.williamramos.cursoalgaworks.domain.exception.*;
 import com.williamramos.cursoalgaworks.domain.model.*;
 import com.williamramos.cursoalgaworks.domain.model.enums.StatusPedido;
 import com.williamramos.cursoalgaworks.domain.repository.*;
+import com.williamramos.cursoalgaworks.infraestruture.repository.especification.PedidoSpecs;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,8 +34,8 @@ public class PedidoService {
     @Autowired
     private ProdutoService produtoService;
 
-    public List<Pedido> listar() {
-        List<Pedido> pedidos = repository.findAll();
+    public List<Pedido> listar(PedidoFilter filtro) {
+        List<Pedido> pedidos = repository.findAll(PedidoSpecs.filtrar(filtro));
         if (pedidos.isEmpty()) {
             throw new PedidoNaoEncontradoException();
         }

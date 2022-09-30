@@ -1,13 +1,10 @@
 package com.williamramos.cursoalgaworks.domain.service;
 
-import com.williamramos.cursoalgaworks.domain.exception.EntidadeNaoEncontradaException;
 import com.williamramos.cursoalgaworks.domain.exception.NegocioException;
 import com.williamramos.cursoalgaworks.domain.exception.ProdutoNaoEncontradoException;
 import com.williamramos.cursoalgaworks.domain.exception.RestauranteNaoEncontradoException;
 import com.williamramos.cursoalgaworks.domain.model.Produto;
-import com.williamramos.cursoalgaworks.domain.model.Permissao;
 import com.williamramos.cursoalgaworks.domain.model.Restaurante;
-import com.williamramos.cursoalgaworks.domain.repository.ProdutoRepository;
 import com.williamramos.cursoalgaworks.domain.repository.ProdutoRepository;
 import com.williamramos.cursoalgaworks.domain.repository.RestauranteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,11 +24,14 @@ public class ProdutoService {
 
     public List<Produto> listar(Long idRestaurante) {
         buscarRestaurante(idRestaurante);
-        List<Produto> produtos = (List<Produto>) repository.findProdutoByRestaurante(idRestaurante);
+        List<Produto> produtos = (List<Produto>) repository.findTodosByRestaurante(idRestaurante);
         if (produtos.isEmpty()) {
             throw new ProdutoNaoEncontradoException("Produto nao encontrado");
         }
         return produtos;
+    }
+    public List<Produto> listarTodosAtivos(Long idRestaurante){
+        return repository.findAtivosByRestaurante(idRestaurante);
     }
 
     public Produto buscar(Long idProduto, Long idRestaurante) {

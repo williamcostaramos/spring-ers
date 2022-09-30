@@ -3,6 +3,7 @@ package com.williamramos.cursoalgaworks.api.controller;
 import com.williamramos.cursoalgaworks.api.converter.Converter;
 import com.williamramos.cursoalgaworks.api.model.dto.PedidoDTO;
 import com.williamramos.cursoalgaworks.api.model.dto.PedidoResumoDTO;
+import com.williamramos.cursoalgaworks.api.model.filter.PedidoFilter;
 import com.williamramos.cursoalgaworks.api.model.input.PedidoInput;
 import com.williamramos.cursoalgaworks.domain.exception.*;
 import com.williamramos.cursoalgaworks.domain.model.Pedido;
@@ -30,8 +31,8 @@ public class PedidoController {
 
 
     @GetMapping()
-    public ResponseEntity<List<PedidoResumoDTO>> listar() {
-        List<PedidoResumoDTO> Pedidos = converterResumido.toDTOList(service.listar());
+    public ResponseEntity<List<PedidoResumoDTO>> pesquisar(PedidoFilter filtro) {
+        List<PedidoResumoDTO> Pedidos = converterResumido.toDTOList(service.listar(filtro));
         return ResponseEntity.status(HttpStatus.OK).body(Pedidos);
     }
 

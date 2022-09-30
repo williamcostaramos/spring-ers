@@ -4,7 +4,6 @@ import com.williamramos.cursoalgaworks.domain.model.enums.StatusPedido;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.List;
 
 public class PedidoResumoDTO {
     private String codigo;
