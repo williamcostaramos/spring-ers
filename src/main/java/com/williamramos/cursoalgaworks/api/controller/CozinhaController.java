@@ -7,6 +7,9 @@ import com.williamramos.cursoalgaworks.domain.exception.*;
 import com.williamramos.cursoalgaworks.domain.model.Cozinha;
 import com.williamramos.cursoalgaworks.domain.service.CozinhaService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,10 +26,12 @@ public class CozinhaController {
     private Converter<Cozinha, CozinhaDTO> converter;
 
     @GetMapping()
-    public ResponseEntity<List<CozinhaDTO>> listar() {
+    public ResponseEntity<Page<CozinhaDTO>> listar(Pageable pageable) {
         try {
-            List<CozinhaDTO> cozinhas = converter.toDTOList(service.listarTodas());
-            return ResponseEntity.ok(cozinhas);
+            Page<Cozinha> cozinhas = service.listarTodas(pageable);
+            List<CozinhaDTO> cozinhaDTOS = converter.toDTOList(cozinhas.getContent());
+            Page<CozinhaDTO> paginaCozinhas = new PageImpl<>(cozinhaDTOS,pageable, cozinhas.getTotalElements());
+            return ResponseEntity.ok(paginaCozinhas);
         } catch (CozinhaNaoEncontradaException e) {
             throw new CozinhaNaoEncontradaException(e.getMessage());
         }
