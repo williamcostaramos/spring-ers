@@ -9,6 +9,9 @@ import com.williamramos.cursoalgaworks.domain.exception.*;
 import com.williamramos.cursoalgaworks.domain.model.Pedido;
 import com.williamramos.cursoalgaworks.domain.service.PedidoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -31,9 +34,11 @@ public class PedidoController {
 
 
     @GetMapping()
-    public ResponseEntity<List<PedidoResumoDTO>> pesquisar(PedidoFilter filtro) {
-        List<PedidoResumoDTO> Pedidos = converterResumido.toDTOList(service.listar(filtro));
-        return ResponseEntity.status(HttpStatus.OK).body(Pedidos);
+    public ResponseEntity<Page<PedidoResumoDTO>> pesquisar(PedidoFilter filtro, Pageable pageable) {
+        Page<Pedido> pedidoPage = service.listar(filtro, pageable);
+        List<PedidoResumoDTO> pedidosDTO = converterResumido.toDTOList(pedidoPage.getContent());
+        Page<PedidoResumoDTO> paginados = new PageImpl<>(pedidosDTO, pageable, pedidoPage.getTotalElements());
+        return ResponseEntity.status(HttpStatus.OK).body(paginados);
     }
 
     @GetMapping("/{codigo}")

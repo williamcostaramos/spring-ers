@@ -8,6 +8,8 @@ import com.williamramos.cursoalgaworks.domain.repository.*;
 import com.williamramos.cursoalgaworks.infraestruture.repository.especification.PedidoSpecs;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,8 +36,8 @@ public class PedidoService {
     @Autowired
     private ProdutoService produtoService;
 
-    public List<Pedido> listar(PedidoFilter filtro) {
-        List<Pedido> pedidos = repository.findAll(PedidoSpecs.filtrar(filtro));
+    public Page<Pedido> listar(PedidoFilter filtro, Pageable pageable) {
+        Page<Pedido> pedidos = repository.findAll(PedidoSpecs.filtrar(filtro), pageable);
         if (pedidos.isEmpty()) {
             throw new PedidoNaoEncontradoException();
         }
