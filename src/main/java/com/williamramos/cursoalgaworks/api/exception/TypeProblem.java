@@ -7,7 +7,8 @@ public enum TypeProblem {
     PARAMETRO_INVALIDO("/parametro-invalido", "Parâmetro inválido"),
     DADOS_INVALIDO("/parametro-invalido", "Dados Inválidos"),
 
-    ERRO_DE_SISTEMA("/erro-de-sistema", "Erro interno do sistema");
+    ERRO_DE_SISTEMA("/erro-de-sistema", "Erro interno do sistema"),
+    TAMANHO_ARQUIVO_EXCEDIDO("/tamanho-arquivo-excedido", "Tamanho do arquivo excedido");
 
 
     private final String url;

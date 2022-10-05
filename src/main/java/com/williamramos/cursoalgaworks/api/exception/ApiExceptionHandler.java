@@ -7,7 +7,9 @@ import com.williamramos.cursoalgaworks.domain.exception.EntidadeNaoEncontradaExc
 import com.williamramos.cursoalgaworks.domain.exception.NegocioException;
 import com.williamramos.cursoalgaworks.domain.exception.ValidationException;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.apache.tomcat.util.http.fileupload.FileUploadException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpHeaders;
@@ -22,6 +24,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
@@ -33,6 +36,8 @@ import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
+    @Value("${spring.servlet.multipart.max-file-size}")
+    private String maxFileSize;
     @Autowired
     private MessageSource messageSource;
 
@@ -44,6 +49,13 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         Problem problem = createProblem(HttpStatus.INTERNAL_SERVER_ERROR.value(), TypeProblem.ERRO_DE_SISTEMA.getUrl(), TypeProblem.ERRO_DE_SISTEMA.getDescricao(), detail, MSG_ERRO_GENERICA_USUARIO);
         return this.handleExceptionInternal(ex, problem, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR, request);
 
+    }
+
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public ResponseEntity<?> handlerFileSizeExceeded(MaxUploadSizeExceededException ex, WebRequest request) {
+        String detalhe = String.format("O arquivo enviado nao pode ser maior que %s", maxFileSize);
+        Problem problem = createProblem(HttpStatus.PAYLOAD_TOO_LARGE.value(), TypeProblem.TAMANHO_ARQUIVO_EXCEDIDO.getUrl(), TypeProblem.TAMANHO_ARQUIVO_EXCEDIDO.getDescricao(), detalhe, detalhe);
+        return this.handleExceptionInternal(ex, problem, new HttpHeaders(), HttpStatus.PAYLOAD_TOO_LARGE, request);
     }
 
     @ExceptionHandler(EntidadeNaoEncontradaException.class)
@@ -104,8 +116,8 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
     @Override
     protected ResponseEntity<Object> handleBindException(BindException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
-        Problem problem = problemExceptionHandler(ex,status);
-        return handleExceptionInternal(ex, problem, headers, status,request);
+        Problem problem = problemExceptionHandler(ex, status);
+        return handleExceptionInternal(ex, problem, headers, status, request);
     }
 
     @Override
@@ -125,17 +137,17 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     private List<FieldProblem> listaProblemas(BindingResult bindingResult) {
-        List<FieldProblem> problemList =  bindingResult.getAllErrors().stream().map(error -> {
-                Locale locale = new Locale("en", "US");
-                String mensagem = messageSource.getMessage(error, locale);
-                if (error instanceof FieldError) {
-                    String fieldError = ((FieldError) error).getField();
-                    return new FieldProblem().setField(fieldError).setUserMessage(mensagem);
-                }
-                return new FieldProblem().setField(error.getObjectName()).setUserMessage(mensagem);
+        List<FieldProblem> problemList = bindingResult.getAllErrors().stream().map(error -> {
+            Locale locale = new Locale("en", "US");
+            String mensagem = messageSource.getMessage(error, locale);
+            if (error instanceof FieldError) {
+                String fieldError = ((FieldError) error).getField();
+                return new FieldProblem().setField(fieldError).setUserMessage(mensagem);
+            }
+            return new FieldProblem().setField(error.getObjectName()).setUserMessage(mensagem);
 
-            }).collect(Collectors.toList());
-            return problemList;
+        }).collect(Collectors.toList());
+        return problemList;
     }
 
 
