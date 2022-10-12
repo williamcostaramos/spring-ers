@@ -7,12 +7,18 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Table(name = "tb_pedido")
 public class Pedido extends BaseEntity {
+    @Column(name = "codigo")
+    private String codigo;
     @Column(name = "subtotal")
     private BigDecimal subtotal;
+
+    @Column(name = "valor_total")
+    private BigDecimal valorTotal;
     @Column(name = "taxa_frete")
     private BigDecimal taxaFrete;
     @Column(name = "data_criacao")
@@ -23,8 +29,12 @@ public class Pedido extends BaseEntity {
     private LocalDateTime dataCancelamento;
     @Column(name = "data_entrega")
     private LocalDateTime dataEntrega;
+
+    @Embedded
+    private Endereco endereco;
     @Column(name = "status")
-    private StatusPedido statusPedido;
+    @Enumerated(EnumType.ORDINAL)
+    private StatusPedido statusPedido = StatusPedido.CRIADO;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "forma_pagamento_id")
     private FormaPagamento formaPagamento;
@@ -35,8 +45,16 @@ public class Pedido extends BaseEntity {
     @JoinColumn(name = "usuario_cliente_id")
     private Usuario cliente;
 
-    @OneToMany(mappedBy = "pedido")
+    @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL)
     private List<ItemPedido> itensPedido = new ArrayList<>();
+
+    public String getCodigo() {
+        return codigo;
+    }
+
+    public void setCodigo(String codigo) {
+        this.codigo = codigo;
+    }
 
     public BigDecimal getSubtotal() {
         return subtotal;
@@ -108,5 +126,53 @@ public class Pedido extends BaseEntity {
 
     public void setCliente(Usuario cliente) {
         this.cliente = cliente;
+    }
+
+    public BigDecimal getValorTotal() {
+        return valorTotal;
+    }
+
+    public void setValorTotal(BigDecimal valorTotal) {
+        this.valorTotal = valorTotal;
+    }
+
+    public StatusPedido getStatusPedido() {
+        return statusPedido;
+    }
+
+    public void setStatusPedido(StatusPedido statusPedido) {
+        this.statusPedido = statusPedido;
+    }
+
+    public List<ItemPedido> getItensPedido() {
+        return itensPedido;
+    }
+
+    public void setItensPedido(List<ItemPedido> itensPedido) {
+        this.itensPedido = itensPedido;
+    }
+
+    public Endereco getEndereco() {
+        return endereco;
+    }
+
+    public void setEndereco(Endereco endereco) {
+        this.endereco = endereco;
+    }
+
+    public void calcularValorTotal() {
+        this.itensPedido.forEach(ItemPedido::calcularPrecoTotal);
+        this.subtotal = itensPedido.stream().map(itemPedido -> itemPedido.getPrecoTotal()).reduce(BigDecimal.ZERO, BigDecimal::add);
+        this.valorTotal = this.subtotal.add(this.taxaFrete);
+    }
+    public void definirValorFrete(){
+        setTaxaFrete(this.restaurante.getTaxaFrete());
+    }
+    public void atribuirPedidoAosItens(){
+        this.itensPedido.forEach(itemPedido -> itemPedido.setPedido(this));
+    }
+    @PrePersist
+    private void gerarCodigo(){
+        setCodigo(UUID.randomUUID().toString());
     }
 }

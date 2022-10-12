@@ -1,0 +1,1 @@
+ALTER TABLE sgc.tb_pedido ADD valor_total DECIMAL NOT NULL;

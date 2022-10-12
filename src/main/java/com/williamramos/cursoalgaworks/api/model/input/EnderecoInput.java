@@ -13,6 +13,7 @@ public class EnderecoInput {
 
     private String complemento;
 
+    private String numero;
 
     private String bairro;
 
@@ -53,6 +54,14 @@ public class EnderecoInput {
 
     public CidadeIdInput getCidade() {
         return cidade;
+    }
+
+    public String getNumero() {
+        return numero;
+    }
+
+    public void setNumero(String numero) {
+        this.numero = numero;
     }
 
     public void setCidade(CidadeIdInput cidade) {

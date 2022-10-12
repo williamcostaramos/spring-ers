@@ -1,8 +1,10 @@
 package com.williamramos.cursoalgaworks.api.controller;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import com.williamramos.cursoalgaworks.api.converter.Converter;
 import com.williamramos.cursoalgaworks.api.model.dto.RestauranteDTO;
 import com.williamramos.cursoalgaworks.api.model.input.RestauranteInput;
+import com.williamramos.cursoalgaworks.api.model.view.RestauranteView;
 import com.williamramos.cursoalgaworks.domain.exception.*;
 import com.williamramos.cursoalgaworks.domain.model.Restaurante;
 import com.williamramos.cursoalgaworks.domain.service.RestauranteService;
@@ -28,6 +30,7 @@ public class RestauranteController {
 
     @Autowired
     private Converter<Restaurante, RestauranteDTO> converter;
+
 
 
     @GetMapping()

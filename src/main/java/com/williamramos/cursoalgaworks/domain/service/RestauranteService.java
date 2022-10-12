@@ -97,9 +97,6 @@ public class RestauranteService {
         ids.forEach(this::inativar);
     }
 
-
-
-
     @Transactional
     public void associarFormaPagamento(Long idRestaurante, Long idPagamento) {
         Restaurante restaurante = buscar(idRestaurante);
@@ -128,7 +125,6 @@ public class RestauranteService {
         restaurante.removerResponsavel(usuario);
     }
 
-
     @Transactional
     public void abrir(Long id) {
         Restaurante restauranteAtual = buscar(id);
@@ -140,7 +136,4 @@ public class RestauranteService {
         Restaurante restauranteAtual = buscar(id);
         restauranteAtual.fechar();
     }
-
-
-
 }

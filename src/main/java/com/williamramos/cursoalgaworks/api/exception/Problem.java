@@ -13,6 +13,8 @@ public class Problem {
     private String type;
     private String title;
     private String detail;
+    private String userMessage;
+    private LocalDateTime timestamp;
     private List<FieldProblem> fields =new ArrayList<>();
 
     public Problem() {
@@ -28,8 +30,7 @@ public class Problem {
         this.timestamp = timestamp;
     }
 
-    private String userMessage;
-    private LocalDateTime timestamp;
+
 
     public Problem status(int status) {
         this.status = status;
