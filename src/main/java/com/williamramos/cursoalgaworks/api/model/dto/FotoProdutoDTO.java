@@ -1,10 +1,13 @@
 package com.williamramos.cursoalgaworks.api.model.dto;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 public class FotoProdutoDTO {
     private String nomeArquivo;
     private String descricao;
     private String contentType;
-    private Long tamanho;
+    private Double tamanho;
 
     public String getNomeArquivo() {
         return nomeArquivo;
@@ -30,11 +33,14 @@ public class FotoProdutoDTO {
         this.contentType = contentType;
     }
 
-    public Long getTamanho() {
+    public Double getTamanho() {
         return tamanho;
     }
 
-    public void setTamanho(Long tamanho) {
-        this.tamanho = tamanho;
+    public void setTamanho(Double tamanho) {
+
+        this.tamanho= BigDecimal.valueOf(tamanho / (1024 * 1024)).setScale(2, RoundingMode.HALF_UP).doubleValue();
+
+
     }
 }

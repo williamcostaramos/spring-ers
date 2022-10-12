@@ -53,7 +53,8 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(MaxUploadSizeExceededException.class)
     public ResponseEntity<?> handlerFileSizeExceeded(MaxUploadSizeExceededException ex, WebRequest request) {
-        String detalhe = String.format("O arquivo enviado nao pode ser maior que %s", maxFileSize);
+
+        String detalhe = String.format("Arquivo maior que o tamanho permitido");
         Problem problem = createProblem(HttpStatus.PAYLOAD_TOO_LARGE.value(), TypeProblem.TAMANHO_ARQUIVO_EXCEDIDO.getUrl(), TypeProblem.TAMANHO_ARQUIVO_EXCEDIDO.getDescricao(), detalhe, detalhe);
         return this.handleExceptionInternal(ex, problem, new HttpHeaders(), HttpStatus.PAYLOAD_TOO_LARGE, request);
     }

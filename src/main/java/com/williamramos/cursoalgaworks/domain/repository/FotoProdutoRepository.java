@@ -11,4 +11,6 @@ public interface FotoProdutoRepository {
     FotoProduto salvar(FotoProduto fotoProduto);
 
     Optional<FotoProduto> findById(Long idProduto);
+
+    void remove(Long id);
 }

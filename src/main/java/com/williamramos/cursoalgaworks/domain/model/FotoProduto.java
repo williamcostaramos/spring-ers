@@ -22,7 +22,7 @@ public class FotoProduto {
     private String contentType;
 
     @Column(name = "tamanho")
-    private Long tamanho;
+    private Double tamanho;
 
     public Long getId() {
         return id;
@@ -64,11 +64,11 @@ public class FotoProduto {
         this.contentType = contentType;
     }
 
-    public Long getTamanho() {
+    public Double getTamanho() {
         return tamanho;
     }
 
-    public void setTamanho(Long tamanho) {
+    public void setTamanho(Double tamanho) {
         this.tamanho = tamanho;
     }
 }
