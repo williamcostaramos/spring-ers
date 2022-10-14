@@ -28,30 +28,25 @@ public class FotoProdutoService implements FotoProdutoRepository {
     @Override
     @Transactional
     public FotoProduto salvar(FotoProduto fotoProduto) {
-        Optional<FotoProduto> foto = findById(fotoProduto.getProduto().getId());
-        foto.ifPresent(item -> {
-            storagefileService.remover(item.getNomeArquivo());
-            manager.remove(item);
-        });
+        FotoProduto foto = findById(fotoProduto.getProduto().getId());
+        if (foto != null) {
+            storagefileService.remover(foto.getNomeArquivo());
+            manager.remove(foto);
+        }
+
         return manager.merge(fotoProduto);
     }
 
     @Override
-    public Optional<FotoProduto> findById(Long idProduto) {
-        CriteriaBuilder builder = manager.getCriteriaBuilder();
-        CriteriaQuery<FotoProduto> query = builder.createQuery(FotoProduto.class);
-        Root<FotoProduto> root = query.from(FotoProduto.class);
-        query.where(builder.equal(root.get("id"), idProduto));
-        FotoProduto photo = manager.createQuery(query).getSingleResult();
-        return Optional.of(photo);
-
+    public FotoProduto findById(Long idProduto) {
+        return manager.find(FotoProduto.class, idProduto);
     }
 
     @Override
     @Transactional
     public void remove(Long id) {
         try {
-            FotoProduto fotoProduto = manager.find(FotoProduto.class, id);
+            FotoProduto fotoProduto = findById(id);
             if (fotoProduto != null) {
                 manager.remove(fotoProduto);
             }
