@@ -4,6 +4,7 @@ import java.io.InputStream;
 
 public class NovaFoto {
     private String nomeArquivo;
+    private String contentType;
     private InputStream inputStream;
 
     public String getNomeArquivo() {
@@ -12,6 +13,14 @@ public class NovaFoto {
 
     public void setNomeArquivo(String nomeArquivo) {
         this.nomeArquivo = nomeArquivo;
+    }
+
+    public String getContentType() {
+        return contentType;
+    }
+
+    public void setContentType(String contentType) {
+        this.contentType = contentType;
     }
 
     public InputStream getInputStream() {

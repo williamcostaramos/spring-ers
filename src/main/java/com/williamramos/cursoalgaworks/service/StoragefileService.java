@@ -1,5 +1,6 @@
 package com.williamramos.cursoalgaworks.service;
 
+import com.williamramos.cursoalgaworks.arquivo.FotoRecuperada;
 import com.williamramos.cursoalgaworks.arquivo.NovaFoto;
 import org.springframework.util.StringUtils;
 
@@ -7,7 +8,7 @@ import java.io.InputStream;
 import java.util.UUID;
 
 public interface StoragefileService {
-    InputStream recuperar(String nomeArquivo);
+    FotoRecuperada recuperar(String nomeArquivo);
     void storage(NovaFoto foto);
 
 

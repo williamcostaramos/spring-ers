@@ -3,6 +3,7 @@ package com.williamramos.cursoalgaworks.api.controller;
 import com.williamramos.cursoalgaworks.api.converter.Converter;
 import com.williamramos.cursoalgaworks.api.model.dto.FotoProdutoDTO;
 import com.williamramos.cursoalgaworks.api.model.input.FotoProdutoInput;
+import com.williamramos.cursoalgaworks.arquivo.FotoRecuperada;
 import com.williamramos.cursoalgaworks.arquivo.NovaFoto;
 import com.williamramos.cursoalgaworks.domain.exception.FotoNaoEncontradaException;
 import com.williamramos.cursoalgaworks.domain.exception.StorageFileException;
@@ -13,6 +14,7 @@ import com.williamramos.cursoalgaworks.domain.service.ProdutoService;
 import com.williamramos.cursoalgaworks.service.StoragefileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -59,6 +61,7 @@ public class RestauranteFotoProdutoController {
             NovaFoto novaFoto = new NovaFoto();
             novaFoto.setInputStream(file.getInputStream());
             novaFoto.setNomeArquivo(foto.getNomeArquivo());
+            novaFoto.setContentType(foto.getContentType());
             foto = fotoProdutoService.salvar(foto);
             storagefileService.storage(novaFoto);
             return ResponseEntity.ok(converter.toDTO(foto));
@@ -75,13 +78,16 @@ public class RestauranteFotoProdutoController {
     }
 
     @GetMapping()
-    public ResponseEntity<InputStreamResource> downloadfoto(@PathVariable("idProduto") Long idProduto, @RequestHeader("accept") String acceptHeader) throws HttpMediaTypeNotAcceptableException {
+    public ResponseEntity<?> downloadfoto(@PathVariable("idProduto") Long idProduto, @RequestHeader("accept") String acceptHeader) throws HttpMediaTypeNotAcceptableException {
         FotoProduto fotoProduto = fotoProdutoService.findById(idProduto);
         MediaType mediaTypeFoto = MediaType.parseMediaType(fotoProduto.getContentType());
         List<MediaType> mediaTypesAceitas = MediaType.parseMediaTypes(acceptHeader);
         validarMediaTypeFile(mediaTypeFoto, mediaTypesAceitas);
-        InputStream inputStream = storagefileService.recuperar(fotoProduto.getNomeArquivo());
-        return ResponseEntity.ok().contentType(mediaTypeFoto).body(new InputStreamResource(inputStream));
+        FotoRecuperada fotoRecuperada = storagefileService.recuperar(fotoProduto.getNomeArquivo());
+        if(fotoRecuperada.hasUrl()){
+            return  ResponseEntity.status(HttpStatus.FOUND).header(HttpHeaders.LOCATION, fotoRecuperada.getUrl()).build();
+        }
+        return ResponseEntity.ok().contentType(mediaTypeFoto).body(new InputStreamResource(fotoRecuperada.getInputStream())) ;
     }
 
     @DeleteMapping()
