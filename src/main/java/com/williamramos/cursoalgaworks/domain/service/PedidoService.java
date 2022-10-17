@@ -6,6 +6,7 @@ import com.williamramos.cursoalgaworks.domain.model.*;
 import com.williamramos.cursoalgaworks.domain.model.enums.StatusPedido;
 import com.williamramos.cursoalgaworks.domain.repository.*;
 import com.williamramos.cursoalgaworks.infraestruture.repository.especification.PedidoSpecs;
+import com.williamramos.cursoalgaworks.service.EmailSendService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
@@ -15,6 +16,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -35,6 +38,9 @@ public class PedidoService {
 
     @Autowired
     private ProdutoService produtoService;
+
+    @Autowired
+    private EmailSendService emailSendService;
 
     public Page<Pedido> listar(PedidoFilter filtro, Pageable pageable) {
         Page<Pedido> pedidos = repository.findAll(PedidoSpecs.filtrar(filtro), pageable);
@@ -105,7 +111,16 @@ public class PedidoService {
         }
         pedido.setStatusPedido(StatusPedido.CONFIRMADO);
         pedido.setDataConfirmacao(LocalDateTime.now());
+
+        EmailSendService.Mensagem mensagem = new EmailSendService.Mensagem();
+        mensagem.setAssunto(String.format("%s - Pedido Confirmado ", pedido.getRestaurante().getNome()));
+        mensagem.setMensagem("pedido-confirmado.html");
+        mensagem.variavel("pedido", pedido);
+        mensagem.destinatario(pedido.getCliente().getEmail());
+        emailSendService.enviar(mensagem);
+
     }
+
     @Transactional
     public void cancelamentoPedido(String codigo) {
         Pedido pedido = buscar(codigo);
@@ -114,6 +129,12 @@ public class PedidoService {
         }
         pedido.setStatusPedido(StatusPedido.CANCELADO);
         pedido.setDataConfirmacao(LocalDateTime.now());
+        EmailSendService.Mensagem mensagem = new EmailSendService.Mensagem();
+        mensagem.setAssunto(String.format("%s - Pedido Cancelado ", pedido.getRestaurante().getNome()));
+        mensagem.setMensagem("pedido-cancelado.html");
+        mensagem.variavel("pedido", pedido);
+        mensagem.destinatario(pedido.getCliente().getEmail());
+        emailSendService.enviar(mensagem);
     }
 
     @Transactional
@@ -125,6 +146,7 @@ public class PedidoService {
         pedido.setStatusPedido(StatusPedido.ENTREGUE);
         pedido.setDataEntrega(LocalDateTime.now());
     }
+
     private void validarPedido(Pedido pedido) {
         Long idRestaurante = pedido.getRestaurante().getId();
         Long idFormaPagamento = pedido.getFormaPagamento().getId();

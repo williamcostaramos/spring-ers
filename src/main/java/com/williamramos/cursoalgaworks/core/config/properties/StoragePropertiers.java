@@ -1,4 +1,4 @@
-package com.williamramos.cursoalgaworks.core.config;
+package com.williamramos.cursoalgaworks.core.config.properties;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
