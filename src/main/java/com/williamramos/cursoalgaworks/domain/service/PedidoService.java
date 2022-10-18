@@ -109,16 +109,8 @@ public class PedidoService {
                     String.format("O status do pedido %s não pode ser alterado para o status %s pois o mesmo foi %s",
                             pedido.getCodigo(), StatusPedido.CONFIRMADO.getDescricao(), pedido.getStatusPedido().getDescricao()));
         }
-        pedido.setStatusPedido(StatusPedido.CONFIRMADO);
-        pedido.setDataConfirmacao(LocalDateTime.now());
-
-        EmailSendService.Mensagem mensagem = new EmailSendService.Mensagem();
-        mensagem.setAssunto(String.format("%s - Pedido Confirmado ", pedido.getRestaurante().getNome()));
-        mensagem.setMensagem("pedido-confirmado.html");
-        mensagem.variavel("pedido", pedido);
-        mensagem.destinatario(pedido.getCliente().getEmail());
-        emailSendService.enviar(mensagem);
-
+        pedido.confirmar();
+        repository.save(pedido);
     }
 
     @Transactional
@@ -127,14 +119,8 @@ public class PedidoService {
         if (pedido.getStatusPedido().equals(StatusPedido.ENTREGUE)) {
             throw new NegocioException(String.format("O status do pedido %s não pode ser alterado para o status %s pois o mesmo foi %s", pedido.getCodigo(), StatusPedido.CANCELADO.getDescricao(), pedido.getStatusPedido().getDescricao()));
         }
-        pedido.setStatusPedido(StatusPedido.CANCELADO);
-        pedido.setDataConfirmacao(LocalDateTime.now());
-        EmailSendService.Mensagem mensagem = new EmailSendService.Mensagem();
-        mensagem.setAssunto(String.format("%s - Pedido Cancelado ", pedido.getRestaurante().getNome()));
-        mensagem.setMensagem("pedido-cancelado.html");
-        mensagem.variavel("pedido", pedido);
-        mensagem.destinatario(pedido.getCliente().getEmail());
-        emailSendService.enviar(mensagem);
+        pedido.cancelar();
+        repository.save(pedido);
     }
 
     @Transactional
@@ -143,8 +129,8 @@ public class PedidoService {
         if (pedido.getStatusPedido().equals(StatusPedido.CANCELADO)) {
             throw new NegocioException(String.format("O status do pedido %s não pode ser alterado para o status %s pois o mesmo foi %s", pedido.getCodigo(), StatusPedido.ENTREGUE.getDescricao(), pedido.getStatusPedido().getDescricao()));
         }
-        pedido.setStatusPedido(StatusPedido.ENTREGUE);
-        pedido.setDataEntrega(LocalDateTime.now());
+        pedido.entregar();
+        repository.save(pedido);
     }
 
     private void validarPedido(Pedido pedido) {
