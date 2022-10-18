@@ -5,6 +5,7 @@ import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.williamramos.cursoalgaworks.core.config.properties.StoragePropertiers;
 import com.williamramos.cursoalgaworks.service.StoragefileService;
 import com.williamramos.cursoalgaworks.service.impl.LocalStoreFileServiceImpl;
 import com.williamramos.cursoalgaworks.service.impl.S3StorageFileServiceImpl;

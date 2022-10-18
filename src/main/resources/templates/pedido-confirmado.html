@@ -1,0 +1,28 @@
+<html>
+<body>
+<h1 style="color: red">Pedido Confirmado</h1>
+<p>Olá <b style="color: black">${pedido.cliente.nome}</b> seu pedido foi confirmado</p>
+<h2>Restaurante: ${pedido.restaurante.nome}</h2>
+<p>Voce comprou os seguintes itens</p>
+        <table  width="100%" cellpadding="0"cellspacing="0", style="max-width: 600px;color: #6f6f6f" border="1" >
+            <thead>
+            <tr>
+                <th style="text-align: center">Produto</th>
+                <th style="text-align: center">Quantidade</th>
+                <th style="text-align: center">Valor</th>
+            </tr>
+            </thead>
+            <tbody>
+                <#list pedido.itensPedido as item>
+                    <tr>
+                        <td style="text-align: center">${item.produto.nome}</td>
+                        <td style="text-align: center">${item.quantidade}</td>
+                        <td style="text-align: center">${item.precoTotal?string.currency}</td>
+                    </tr>
+                </#list>
+            </tbody>
+        </table>
+    <h4>Valor Total: ${pedido.valorTotal?string.currency}</h4>
+    <h4>Forma Pagamento: ${pedido.formaPagamento.descricao}</h4>
+</body>
+</html>

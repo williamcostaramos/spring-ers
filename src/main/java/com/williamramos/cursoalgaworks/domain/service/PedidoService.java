@@ -6,6 +6,7 @@ import com.williamramos.cursoalgaworks.domain.model.*;
 import com.williamramos.cursoalgaworks.domain.model.enums.StatusPedido;
 import com.williamramos.cursoalgaworks.domain.repository.*;
 import com.williamramos.cursoalgaworks.infraestruture.repository.especification.PedidoSpecs;
+import com.williamramos.cursoalgaworks.service.EmailSendService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
@@ -15,6 +16,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -35,6 +38,9 @@ public class PedidoService {
 
     @Autowired
     private ProdutoService produtoService;
+
+    @Autowired
+    private EmailSendService emailSendService;
 
     public Page<Pedido> listar(PedidoFilter filtro, Pageable pageable) {
         Page<Pedido> pedidos = repository.findAll(PedidoSpecs.filtrar(filtro), pageable);
@@ -103,17 +109,18 @@ public class PedidoService {
                     String.format("O status do pedido %s não pode ser alterado para o status %s pois o mesmo foi %s",
                             pedido.getCodigo(), StatusPedido.CONFIRMADO.getDescricao(), pedido.getStatusPedido().getDescricao()));
         }
-        pedido.setStatusPedido(StatusPedido.CONFIRMADO);
-        pedido.setDataConfirmacao(LocalDateTime.now());
+        pedido.confirmar();
+        repository.save(pedido);
     }
+
     @Transactional
     public void cancelamentoPedido(String codigo) {
         Pedido pedido = buscar(codigo);
         if (pedido.getStatusPedido().equals(StatusPedido.ENTREGUE)) {
             throw new NegocioException(String.format("O status do pedido %s não pode ser alterado para o status %s pois o mesmo foi %s", pedido.getCodigo(), StatusPedido.CANCELADO.getDescricao(), pedido.getStatusPedido().getDescricao()));
         }
-        pedido.setStatusPedido(StatusPedido.CANCELADO);
-        pedido.setDataConfirmacao(LocalDateTime.now());
+        pedido.cancelar();
+        repository.save(pedido);
     }
 
     @Transactional
@@ -122,9 +129,10 @@ public class PedidoService {
         if (pedido.getStatusPedido().equals(StatusPedido.CANCELADO)) {
             throw new NegocioException(String.format("O status do pedido %s não pode ser alterado para o status %s pois o mesmo foi %s", pedido.getCodigo(), StatusPedido.ENTREGUE.getDescricao(), pedido.getStatusPedido().getDescricao()));
         }
-        pedido.setStatusPedido(StatusPedido.ENTREGUE);
-        pedido.setDataEntrega(LocalDateTime.now());
+        pedido.entregar();
+        repository.save(pedido);
     }
+
     private void validarPedido(Pedido pedido) {
         Long idRestaurante = pedido.getRestaurante().getId();
         Long idFormaPagamento = pedido.getFormaPagamento().getId();

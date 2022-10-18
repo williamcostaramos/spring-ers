@@ -1,17 +1,27 @@
 package com.williamramos.cursoalgaworks.domain.model;
 
+import com.williamramos.cursoalgaworks.domain.event.PedidoCanceladoEvent;
+import com.williamramos.cursoalgaworks.domain.event.PedidoConfirmadoEvent;
+import com.williamramos.cursoalgaworks.domain.event.PedidoEntregueEvent;
 import com.williamramos.cursoalgaworks.domain.model.enums.StatusPedido;
+import org.springframework.data.domain.AbstractAggregateRoot;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @Entity
 @Table(name = "tb_pedido")
-public class Pedido extends BaseEntity {
+public class Pedido extends AbstractAggregateRoot<Pedido> {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
     @Column(name = "codigo")
     private String codigo;
     @Column(name = "subtotal")
@@ -47,6 +57,14 @@ public class Pedido extends BaseEntity {
 
     @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL)
     private List<ItemPedido> itensPedido = new ArrayList<>();
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getCodigo() {
         return codigo;
@@ -160,19 +178,56 @@ public class Pedido extends BaseEntity {
         this.endereco = endereco;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+
+        Pedido pedido = (Pedido) o;
+
+        return getId().equals(pedido.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+
     public void calcularValorTotal() {
         this.itensPedido.forEach(ItemPedido::calcularPrecoTotal);
         this.subtotal = itensPedido.stream().map(itemPedido -> itemPedido.getPrecoTotal()).reduce(BigDecimal.ZERO, BigDecimal::add);
         this.valorTotal = this.subtotal.add(this.taxaFrete);
     }
-    public void definirValorFrete(){
+
+    public void definirValorFrete() {
         setTaxaFrete(this.restaurante.getTaxaFrete());
     }
-    public void atribuirPedidoAosItens(){
+
+    public void atribuirPedidoAosItens() {
         this.itensPedido.forEach(itemPedido -> itemPedido.setPedido(this));
     }
+
     @PrePersist
-    private void gerarCodigo(){
+    private void gerarCodigo() {
         setCodigo(UUID.randomUUID().toString());
     }
+
+    public void confirmar() {
+        this.setStatusPedido(StatusPedido.CONFIRMADO);
+        this.setDataConfirmacao(LocalDateTime.now());
+        registerEvent(new PedidoConfirmadoEvent(this));
+    }
+
+    public void cancelar() {
+        this.setStatusPedido(StatusPedido.CANCELADO);
+        this.setDataCancelamento(LocalDateTime.now());
+        registerEvent(new PedidoCanceladoEvent(this));
+    }
+    public void entregar() {
+        this.setStatusPedido(StatusPedido.CANCELADO);
+        this.setDataEntrega(LocalDateTime.now());
+        registerEvent(new PedidoEntregueEvent(this));
+    }
+
 }
