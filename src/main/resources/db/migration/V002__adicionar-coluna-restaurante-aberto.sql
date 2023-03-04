@@ -1,1 +1,1 @@
-ALTER TABLE sgc.tb_restaurante ADD aberto BOOL DEFAULT false NOT NULL;
+ALTER TABLE tb_restaurante ADD aberto BOOL DEFAULT false NOT NULL;

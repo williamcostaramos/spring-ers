@@ -1,4 +1,4 @@
-CREATE TABLE sgc.tb_restaurante_responsavel
+CREATE TABLE tb_restaurante_responsavel
 (
     restaurante_id BIGINT NOT NULL,
     usuario_id     BIGINT NOT NULL,
